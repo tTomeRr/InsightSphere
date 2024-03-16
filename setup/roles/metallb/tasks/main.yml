@@ -1,0 +1,55 @@
+---
+- name: Deploy MetalLB on Kubernetes
+  vars:
+    namespace: metallb-system
+    path: /tmp
+
+  tasks:
+    - name: Install the Kubernetes Python library
+      pip:
+        name: kubernetes
+        state: present
+
+    - name: Retrieve the IPv4 Range from the Kind Cluster Network
+      ansible.builtin.shell: docker network inspect -f '{{.IPAM.Config}}' kind | grep -o '[0-9]\{1,3\}\.[0-9]\{1,3\}\.[0-9]\{1,3\}' | head -n 1
+      register: ip_range
+
+    - name: Generate the IPv4 Range for MetalLB IP Pool
+      ansible.builtin.shell: echo "{{ ip_range.stdout }}.120-{{ ip_range.stdout }}.129"
+      register: ip_pool_range
+
+    - name: Create MetalLB IP Pool Configuration from Template
+      template:
+        src: templates/ip-pool.yaml.j2
+        dest: "{{ path }}/ip-pool.yaml"
+      vars:
+        ip_pool_range: "{{ ip_pool_range.stdout }}"
+
+    - name: Copy MetalLB Configuration Files to the Destination Path
+      copy:
+        src: "{{ item }}"
+        dest: "{{ path }}/{{ item }}"
+      loop:
+        - metallb.yaml
+        - l2advertisement.yaml
+
+    - name: Apply MetalLB Base Configuration
+      kubernetes.core.k8s:
+        state: present
+        namespace: "{{ namespace }}"
+        src: metallb.yaml
+
+    - name: Wait for MetalLB Components to be Ready
+      shell: "kubectl get pods -o json -n {{ namespace }}"
+      register: kubectl_get_pods
+      until: kubectl_get_pods.stdout|from_json|json_query('items[*].status.phase')|unique == ["Running"]
+
+    - name: Apply MetalLB IP Pool and L2 Advertisement Configuration
+      kubernetes.core.k8s:
+        state: present
+        namespace: "{{ namespace }}"
+        src: "{{ path }}/{{ item }}"
+      loop:
+        - ip-pool.yaml
+        - l2advertisement.yaml
+
