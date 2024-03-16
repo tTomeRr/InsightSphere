@@ -18,21 +18,6 @@
       ansible.builtin.shell: echo "{{ ip_range.stdout }}.120-{{ ip_range.stdout }}.129"
       register: ip_pool_range
 
-    - name: Create MetalLB IP Pool Configuration from Template
-      template:
-        src: templates/ip-pool.yaml.j2
-        dest: "{{ path }}/ip-pool.yaml"
-      vars:
-        ip_pool_range: "{{ ip_pool_range.stdout }}"
-
-    - name: Copy MetalLB Configuration Files to the Destination Path
-      copy:
-        src: "{{ item }}"
-        dest: "{{ path }}/{{ item }}"
-      loop:
-        - metallb.yaml
-        - l2advertisement.yaml
-
     - name: Apply MetalLB Base Configuration
       kubernetes.core.k8s:
         state: present
@@ -44,12 +29,17 @@
       register: kubectl_get_pods
       until: kubectl_get_pods.stdout|from_json|json_query('items[*].status.phase')|unique == ["Running"]
 
-    - name: Apply MetalLB IP Pool and L2 Advertisement Configuration
+    - name: Apply MetalLB L2 Advertisement Configuration
       kubernetes.core.k8s:
         state: present
         namespace: "{{ namespace }}"
-        src: "{{ path }}/{{ item }}"
-      loop:
-        - ip-pool.yaml
-        - l2advertisement.yaml
+        src: l2advertisement.yaml 
+
+    - name: Apply MetalLB IP Pool Configuration
+      kubernetes.core.k8s:
+        state: present
+        namespace: "{{ namespace }}"
+        definition: "{{ lookup('template', 'templates/ip-pool.yaml.j2') }}"
+      vars:
+        ip_pool_range: "{{ ip_pool_range.stdout }}"
 
