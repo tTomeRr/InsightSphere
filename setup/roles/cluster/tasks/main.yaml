@@ -1,6 +1,10 @@
 ---
-- name: Create the Kind Cluster
-  kubernetes.core.k8s:
-    state: present
+- name: Copy the Kind cluster configuration file to the managed node
+  ansible.builtin.copy:
     src: prom-graf-cluster.yaml
+    dest: /tmp/prom-graf-cluster.yaml
+
+- name: Create the Kind Cluster
+  ansible.builtin.shell:
+    cmd: "kind create cluster --config /tmp/prom-graf-cluster.yaml"
 
