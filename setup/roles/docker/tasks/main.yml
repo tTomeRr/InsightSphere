@@ -1,64 +1,52 @@
 ---
-- name: Install Docker 
-  hosts: hosts
-  become: yes
-  tasks:
-    - name: Install required packages for Docker
-      ansible.builtin.dnf:
-        name:
-          - curl
-          - ca-certificates
-          - gnupg2
+- name: Install Docker
+  ansible.builtin.dnf:
+    name:
+      - curl
+      - ca-certificates
+      - gnupg2
 
-    - name: Create directory for Docker's GPG key
-      ansible.builtin.file:
-        path: /etc/apt/keyrings
-        state: directory
-        mode: '0755'
+- name: Add Docker's official GPG key
+  ansible.builtin.rpm_key:
+    state: present
+    key: https://download.docker.com/linux/centos/gpg
 
-    - name: Add Docker's official GPG key
-      ansible.builtin.apt_key:
-        url: https://download.docker.com/linux/centos/gpg
-        keyring: /etc/apt/keyrings/docker.gpg
-        state: present
+- name: Add Docker repository
+  ansible.builtin.yum_repository:
+    name: Docker
+    description: Docker Repository
+    baseurl: https://download.docker.com/linux/centos/7/$basearch/stable
+    gpgcheck: yes
+    gpgkey: https://download.docker.com/linux/centos/gpg
+    enabled: yes
 
+- name: Install Docker and related packages
+  ansible.builtin.dnf:
+    name: "{{ item }}"
+    state: present
+  loop:
+    - docker-ce
+    - docker-ce-cli
+    - containerd.io
+    - docker-compose
 
-    - name: Add Docker repository
-      ansible.builtin.yum_repository:
-        name: Docker
-        description: Docker Repository
-        baseurl: https://download.docker.com/linux/centos/7/$basearch/stable
-        gpgcheck: yes
-        gpgkey: file:///etc/pki/rpm-gpg/docker.gpg
-        enabled: yes
+- name: Add Docker group
+  ansible.builtin.group:
+    name: docker
+    state: present
 
-    - name: Install Docker and related packages
-      ansible.builtin.dnf:
-        name: "{{ item }}"
-        state: present
-      loop:
-        - docker-ce
-        - docker-ce-cli
-        - containerd.io
-        - docker-compose
+- name: Add user to Docker group
+  ansible.builtin.user:
+    name: "{{ ansible_user }}"
+    groups: docker
+    append: true
 
-    - name: Add Docker group
-      ansible.builtin.group:
-        name: docker
-        state: present
-
-    - name: Add user to Docker group
-      ansible.builtin.user:
-        name: "{{ ansible_user }}"
-        groups: docker
-        append: true
-
-    - name: Enable and start Docker services
-      ansible.builtin.systemd:
-        name: "{{ item }}"
-        enabled: true
-        state: started
-      loop:
-        - docker.service
-        - containerd.service
+- name: Enable and start Docker services
+  ansible.builtin.systemd:
+    name: "{{ item }}"
+    enabled: true
+    state: started
+  loop:
+    - docker.service
+    - containerd.service
 

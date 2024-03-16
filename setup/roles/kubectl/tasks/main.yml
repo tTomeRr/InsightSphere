@@ -1,32 +1,31 @@
-- name: Install kubectl
-  tasks:
-   - name: Get latest kubectl version
-        uri:
-          url: https://dl.k8s.io/release/stable.txt
-          return_content: yes
-        register: version
+---
+- name: Get latest kubectl version
+  uri:
+    url: https://dl.k8s.io/release/stable.txt
+    return_content: yes
+  register: version
 
-      - name: Download the latest kubectl release
-        uri:
-          url: https://dl.k8s.io/release/{{ version.content }}/bin/linux/arm/kubectl
-          dest: /home/{{ ansible_user }}
-        register: kubectl
+- name: Download the latest kubectl release
+  uri:
+    url: "https://dl.k8s.io/release/{{ version.content }}/bin/linux/arm/kubectl"
+    dest: "/home/{{ ansible_user }}"
+  register: kubectl
 
-      - name: Download the kubectl checksum file
-        uri:
-          url: https://dl.k8s.io/{{ version.content }}/bin/linux/arm/kubectl.sha256
-          dest: /home/{{ ansible_user }}
+- name: Download the kubectl checksum file
+  uri:
+    url: "https://dl.k8s.io/{{ version.content }}/bin/linux/arm/kubectl.sha256"
+    dest: "/home/{{ ansible_user }}"
 
-      - name: Validate the kubectl binary against the checksum file
-        shell: echo "$(cat kubectl.sha256)  kubectl" | sha256sum --check
-        register: result
+- name: Validate the kubectl binary against the checksum file
+  shell: "echo \"$(cat kubectl.sha256)  kubectl\" | sha256sum --check"
+  register: result
 
-      - name: Assert that the kubectl binary is OK
-        vars:
-          expected: "kubectl: OK"
-        assert:
-          that:
-            - result.stdout == expected
-          fail_msg: "{{ result.stdout }}"
-          success_msg: "{{ result.stdout }}"
+- name: Assert that the kubectl binary is OK
+  vars:
+    expected: "kubectl: OK"
+  assert:
+    that:
+      - result.stdout == expected
+    fail_msg: "{{ result.stdout }}"
+    success_msg: "{{ result.stdout }}"
 

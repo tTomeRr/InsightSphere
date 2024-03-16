@@ -1,0 +1,3 @@
+prometheus_url: "prometheus.insightsphere.com"
+prometheus_chart_name: "prometheus"
+
