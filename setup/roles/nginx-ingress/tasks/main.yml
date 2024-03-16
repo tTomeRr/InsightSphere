@@ -1,0 +1,40 @@
+---
+- name: Install the Nginx Ingress controller
+  vars:
+    - nginx_version: "1.1.3"
+- name: Install the Kubernetes Python library
+  pip:
+    name: kubernetes
+    state: present
+
+- name: Check if /tmp/nginx-ingress directory exists
+  stat:
+    path: /tmp/nginx-ingress
+  register: nginx_ingress_dir
+
+- name: Check if Nginx Ingress is installed
+  command: helm list -q
+  register: helm_list
+
+- name: Pull the Nginx Ingress Helm chart
+  command: helm pull oci://ghcr.io/nginxinc/charts/nginx-ingress --untar --version {{ nginx_version }} 
+  args:
+    chdir: /tmp
+  when: not nginx_ingress_dir.stat.exists
+
+- name: Apply CRDs for Nginx Ingress
+  kubernetes.core.k8s:
+    state: present
+    src: "{{ item }}"
+  loop: "{{ lookup('fileglob', '/tmp/nginx-ingress/crds/*.yaml', wantlist=True) }}"
+  when: "'nginx-ingress' not in helm_list.stdout"
+
+- name: Install Nginx Ingress using Helm if not installed
+  command: helm install nginx-ingress oci://ghcr.io/nginxinc/charts/nginx-ingress --version {{ nginx_version }}
+  when: "'nginx-ingress' not in helm_list.stdout"
+
+- name: Clean up nginx-ingress folder
+  file:
+    path: "/tmp/nginx-ingress"
+    state: absent
+
