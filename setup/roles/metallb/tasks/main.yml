@@ -1,11 +1,4 @@
 ---
-- name: Install required Python libraries
-  pip:
-    name:
-      - kubernetes
-      - jmespath
-    state: present
-
 - name: Retrieve the IPv4 Range from the Kind Cluster Network
   ansible.builtin.shell: >
     docker network inspect -f '{{ "{{.IPAM.Config}}" | quote }}' kind
