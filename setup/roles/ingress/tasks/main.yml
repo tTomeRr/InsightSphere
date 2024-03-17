@@ -1,15 +1,8 @@
 ---
-- name: Deploy the Prometheus and Grafana ingress on Kubernetes
-  tasks:
-    - name: Install the Kubernetes Python library
-      pip:
-        name: kubernetes
-        state: present
-
-    - name: Apply Prometheus and Grafana ingress Configuration
-      kubernetes.core.k8s:
-        state: present
-        src: "{{ item }}"
-      loop:
-        - grafana-ingress.yaml
-        - prometheus-ingress.yaml
+- name: Apply Prometheus and Grafana ingress Configuration
+  kubernetes.core.k8s:
+    state: present
+    src: "{{ item }}"
+  loop:
+    - grafana-ingress.yaml
+    - prometheus-ingress.yaml
