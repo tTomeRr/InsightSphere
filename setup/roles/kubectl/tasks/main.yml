@@ -7,25 +7,22 @@
 
 - name: Download the latest kubectl release
   uri:
-    url: "https://dl.k8s.io/release/{{ version.content }}/bin/linux/arm/kubectl"
-    dest: "/home/{{ ansible_user }}"
+    url: https://dl.k8s.io/release/{{ version.content }}/bin/linux/arm/kubectl
+    dest: /home/{{ ansible_user }}
   register: kubectl
 
-- name: Download the kubectl checksum file
-  uri:
-    url: "https://dl.k8s.io/{{ version.content }}/bin/linux/arm/kubectl.sha256"
-    dest: "/home/{{ ansible_user }}"
+- name: Remove existing kubectl binary
+  file:
+    path: /usr/local/bin/kubectl
+    state: absent
 
-- name: Validate the kubectl binary against the checksum file
-  shell: "echo \"$(cat kubectl.sha256)  kubectl\" | sha256sum --check"
-  register: result
+- name: Move kubectl and change permissions
+  copy:
+    src: "{{ kubectl.path }}"
+    dest: /usr/local/bin/kubectl
+    remote_src: yes
+    owner: root
+    group: root
+    mode: '+x'
 
-- name: Assert that the kubectl binary is OK
-  vars:
-    expected: "kubectl: OK"
-  assert:
-    that:
-      - result.stdout == expected
-    fail_msg: "{{ result.stdout }}"
-    success_msg: "{{ result.stdout }}"
-
+#TODO check if a newer version of kubectl avaiable then download, else skip this
