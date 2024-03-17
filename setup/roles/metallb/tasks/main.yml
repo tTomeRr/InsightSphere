@@ -1,13 +1,18 @@
 ---
-- name: Install the Kubernetes Python library
+- name: Install required Python libraries
   pip:
-    name: kubernetes
+    name:
+      - kubernetes
+      - jmespath
     state: present
 
 - name: Retrieve the IPv4 Range from the Kind Cluster Network
-  ansible.builtin.shell: docker network inspect -f '{{.IPAM.Config}}' kind | grep -o '[0-9]\{1,3\}\.[0-9]\{1,3\}\.[0-9]\{1,3\}' | head -n 1
+  ansible.builtin.shell: >
+    docker network inspect -f '{{ "{{.IPAM.Config}}" | quote }}' kind
+    | grep -o '[0-9]\{1,3\}\.[0-9]\{1,3\}\.[0-9]\{1,3\}'
+    | head -n 1
   register: ip_range
-
+  
 - name: Generate the IPv4 Range for MetalLB IP Pool
   ansible.builtin.shell: echo "{{ ip_range.stdout }}.120-{{ ip_range.stdout }}.129"
   register: ip_pool_range
@@ -33,7 +38,5 @@
   kubernetes.core.k8s:
     state: present
     namespace: "{{ namespace }}"
-    definition: "{{ lookup('template', 'templates/ip-pool.yaml.j2') }}"
-  vars:
-    ip_pool_range: "{{ ip_pool_range.stdout }}"
+    definition: "{{ lookup('template', 'templates/ip-pool.yaml.j2') | from_yaml }}"
 

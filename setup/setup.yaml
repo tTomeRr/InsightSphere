@@ -12,4 +12,4 @@
     - role: nginx-ingress
     - role: prometheus
     - role: grafana
-
+    - role: ingress
