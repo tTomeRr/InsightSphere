@@ -17,10 +17,15 @@
 - name: Check the Nginx Ingress IP address
   ansible.builtin.shell: kubectl get svc nginx-ingress-controller -o=jsonpath='{.status.loadBalancer.ingress[0].ip}'
   register: nginx_ingress_ip
+  
+- name: Check if the Prometheus server URL is in /etc/hosts
+  ansible.builtin.command: "grep -q '{{ nginx_ingress_ip.stdout }}    {{ prometheus_url }}' /etc/hosts"
+  register: grep_result
+  ignore_errors: true
 
 - name: Add the Prometheus server URL to /etc/hosts
   ansible.builtin.lineinfile:
     path: /etc/hosts
     line: "{{ nginx_ingress_ip.stdout }}    {{ prometheus_url }}"
-  when: not grep -q "{{ nginx_ingress_ip.stdout }}    {{ prometheus_url }}" /etc/hosts
+  when: grep_result.rc != 0
 
