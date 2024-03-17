@@ -1,0 +1,21 @@
+---
+- name: Install Python 3
+  ansible.builtin.package:
+    name: python3
+    state: present
+
+- name: Upgrade pip
+  ansible.builtin.pip:
+    name: pip
+    state: latest
+    executable: pip3
+
+- name: Install required Python libraries
+  pip:
+    name:
+      - kubernetes
+      - jmespath
+    state: present
+
+
+
