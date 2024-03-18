@@ -2,8 +2,8 @@
 
 
 # Initialize paths to required files
-INVENTORY_FILE_PATH="../../../inventory.ini"
-READ_INI_SCRIPT_PATH="read-ini.sh"
+INVENTORY_FILE_PATH="inventory.ini"
+READ_INI_SCRIPT_PATH="roles/prometheus_scrape_config/files/read-ini.sh"
 CUSTOM_SCRAPE_CONFIG_PATH="generate_scrape_file.yaml"
 PROMETHEUS_HELM_CHART_NAME="prometheus"
 HELM_CHART_REPO="prometheus-community/prometheus"

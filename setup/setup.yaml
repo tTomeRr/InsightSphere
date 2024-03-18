@@ -2,14 +2,15 @@
 - name: Deploy Kubernetes cluster with Prometheus and Grafana
   hosts: local
   roles:
-    - role: system-upgrade
-    - role: docker
-    - role: kubectl
-    - role: kind
-    - role: helm
-    - role: cluster
-    - role: metallb
-    - role: nginx-ingress
-    - role: prometheus
-    - role: grafana
-    - role: ingress
+    #- role: system-upgrade
+    #- role: docker
+    #- role: kubectl
+    #- role: kind
+    #- role: helm
+    #- role: cluster
+    #- role: metallb
+    #- role: nginx-ingress
+    #- role: prometheus
+    #- role: grafana
+    #- role: ingress
+    - role: prometheus_scrape_config
