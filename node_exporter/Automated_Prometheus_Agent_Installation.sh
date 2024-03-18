@@ -11,6 +11,8 @@ wget -O ${exporter_type}-latest.tar.gz $(curl -s https://api.github.com/repos/pr
 if [ $? -ne 0  ]; then
 	echo "Failed to download the exporter latest version from GitHub (exit code $?) . Check internet connection and try again."
 	exit
+else
+	echo "Successfully downloaded the exporter latest version from GitHub!"
 fi
 
 # Extracting the compressed archive
@@ -82,12 +84,23 @@ elif [ "$exporter_type" == "snmp_exporter" ]; then
 fi
 
 # If up and running, send success message, if failed also send message and exit with failure
-if [ "$response_code" -eq 200 ]; then
+
+int1=10
+while [ $int1 -gt 0 ]; do
+
+	if [ "$response_code" -eq 200 ]; then
 
                 echo "${exporter_type} successfully created and is up and running as a service!"
+		break
+	elif [ $int1 -eq 1 ]; then
 
-        else
-                echo "${exporter_type} run into a problem. please check configuration and try again."
+		echo "${exporter_type} run into a problem. please check configuration and try again."
 		exit
-fi
+	fi
+	((int1--))
+	sleep 2
+
+done
+
+
 
