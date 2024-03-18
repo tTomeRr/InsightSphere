@@ -5,6 +5,8 @@
 INVENTORY_FILE_PATH="../../../inventory.ini"
 READ_INI_SCRIPT_PATH="read-ini.sh"
 CUSTOM_SCRAPE_CONFIG_PATH="generate_scrape_file.yaml"
+PROMETHEUS_HELM_CHART_NAME="prometheus"
+HELM_CHART_REPO="prometheus-community/prometheus"
 
 
 # Check if the inventory file exists
@@ -17,6 +19,12 @@ fi
 # Check if the read-ini script exists
 if [ ! -f "$READ_INI_SCRIPT_PATH" ]; then
 	echo "Read-ini script '$READ_INI_SCRIPT_PATH' not found. "
+	exit 1
+fi
+
+# Check if the Prometheus Helm chart exists
+if ! helm list --short | grep -q "$PROMETHEUS_HELM_CHART_NAME"; then 
+	echo "Prometheus Helm Chart '$PROMETHEUS_HELM_CHART_NAME' not found. "
 	exit 1
 fi
 
@@ -61,16 +69,16 @@ function add_client_to_configuration() {
 			add_node_exporter "$client"
 			;;
 		kubernetes)
-			add_kubernetes "$client"
+			add_kubernetes_exporter "$client"
 			;;
 		network)
-			add_network "$client"
+			add_network_exporter "$client"
 			;;
 		storage)
-			add_storage "$client"
+			add_storage_exporter "$client"
 			;;
 		proxmox)
-			add_proxmox "$client"
+			add_proxmox_exporter "$client"
 			;;
 	esac
 }
@@ -97,19 +105,51 @@ function add_proxmox_exporter() {
 
 	cat <<EOF >> "$CUSTOM_SCRAPE_CONFIG_PATH"
 - job_name: 'Proxmox VE: $client'
-    static_configs:
-      - targets:
-        - $client:9221  # Proxmox VE node with PVE exporter.
-        - $client:9221  # Proxmox VE node with PVE exporter.
-    metrics_path: /pve
-    params:
-      module: [default]
-      cluster: ['1']
-      node: ['1']
+  static_configs:
+  - targets: ['$client:9221']
 EOF
 }
 
 
+function add_network_exporter() {
+	client="$1"
+
+	cat <<EOF >> "$CUSTOM_SCRAPE_CONFIG_PATH"
+- job_name: 'SNMP Network Device: $client'
+  metrics_path: /snmp
+  static_configs:
+    - targets: ['$client:161']
+  relabel_configs:
+    - source_labels: [__address__]
+      target_label: __param_target
+    - source_labels: [__param_target]
+      target_label: instance
+    - target_label: __address__
+      replacement: 'snmp-exporter.example.com:9116'
+EOF
+}
+
+function add_proxmox_exporter() {
+	client="$1"
+
+	cat <<EOF >> "$CUSTOM_SCRAPE_CONFIG_PATH"
+- job_name: 'NetApp Storage $client'
+  static_configs:
+  - targets: ['$client:9280']
+
+EOF
+}
+
+function add_kubernetes_exporter() {
+	client="$1"
+
+	cat <<EOF >> "$CUSTOM_SCRAPE_CONFIG_PATH"
+
+- job_name: 'kube-state-metrics $client'
+  static_configs:
+  - targets: ['$client:8080']
+EOF
+}
 
 
 ###########
@@ -125,14 +165,18 @@ create_custom_scrape_file
 for group in node_exporters kubernetes network storage proxmox; do
 	for client in $(./"$READ_INI_SCRIPT_PATH" "$INVENTORY_FILE_PATH" "$group"); do
 		if check_connection_to_client "$client"; then
+			echo "Ping to $client was successful. Adding it to the Prometheus scrape configuration."
 			add_client_to_configuration "$client" "$group"
+		else
+			echo "Unable to ping $client. Skipping."
 		fi
+
 	done
 done
 
 
 # Upgrade the Helm chart with the custom scrape configuration
-upgrade_helm_chart
+upgrade_helm_chart &> /dev/null && echo "Helm Chart was succesfully updated!" || echo "ERROR: Failed to update Helm chart."
 
 
 # Delete the temporary custom scrape configuration file
@@ -141,6 +185,4 @@ delete_custom_scrape_file
 
 # Restart Prometheus to apply the new configuration
 killall -HUP prometheus
-
-# TODO: Add templates for network, storage, proxmox, kubernetes
 
