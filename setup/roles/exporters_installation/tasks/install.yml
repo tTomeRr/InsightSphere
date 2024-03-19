@@ -1,0 +1,22 @@
+- name: Run the script to install and run the exporters
+  script: automated_prometheus_agent_installation.sh "{{ item }}"
+  loop: "{{ exporters_types }}"
+  become: yes
+  register: script_output
+
+- debug:
+    msg: "Successfully downloaded the exporter latest version from GitHub!"
+  when: '"Successfully downloaded" in script_output.stdout'
+
+- fail:
+    msg: "Failed to download the exporter latest version from GitHub. Check internet connection and try again."
+  when: '"Failed to download" in script_output.stdout'
+
+- debug:
+    msg: "Exporter installation successful"
+  when: '"successfully created" in script_output.stdout'
+
+- fail:
+    msg: "Exporter installation failed"
+  when: '"run into a problem" is in script_output.stdout'
+

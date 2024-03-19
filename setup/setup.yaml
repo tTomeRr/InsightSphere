@@ -14,3 +14,4 @@
     #- role: grafana
     #- role: ingress
     - role: prometheus_scrape_config
+    - role: exporters_installation
