@@ -1,0 +1,34 @@
+---
+
+- name: Check if cert-manager is installed
+  command: helm repo list -q
+  register: helm_repo_list
+
+- name: Adding cert-manager repo to local Helm chart and updating helm repo cache
+  command: helm repo add jetstack https://charts.jetstack.io
+  when: 
+
+---
+- name: Checkes if cert-manager is already up and running
+  script: is_cert_manager_up.sh
+  register: cert_manager_state
+
+- block:
+
+  - name: Check if cert-manager repo is already added
+    command: helm repo list -q | grep -q jetstack
+    register: is_repo_added
+    changed_when: false
+
+  - name: Adding cert-manager repo to local Helm chart
+    command: helm repo add jetstack https://charts.jetstack.io
+    when: not is_repo_added.stdout
+
+  - name: Updating helm repo cache
+    command: helm repo update
+
+  - name: install Cert-Manager into your k8s cluster
+    command: helm install cert-manager jetstack/cert-manager --namespace cert-manager --create-namespace --version v1.14.4 --set installCRDs=true
+
+  - name:
+

@@ -7,12 +7,12 @@
     #- role: kubectl
     #- role: kind
     #- role: helm
-    #- role: cluster
+    - role: cluster
     - role: cert-manager
-    #- role: metallb
-    #- role: nginx-ingress
-    #- role: prometheus
-    #- role: grafana
-    #- role: ingress
+    - role: metallb
+    - role: nginx-ingress
+    - role: prometheus
+    - role: grafana
+    - role: ingress
     #- role: prometheus_scrape_config
-    - role: exporters_installation
+    #- role: exporters_installation

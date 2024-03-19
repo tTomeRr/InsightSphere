@@ -1,4 +1,8 @@
 ---
+- name: Add Jetstack Helm repository
+  kubernetes.core.helm_repo:
+    name: jetstack
+    repo_url: https://charts.jetstack.io
 
 - name: Install Cert-Manager into your k8s cluster
   kubernetes.core.helm:
@@ -6,15 +10,13 @@
     chart_ref: jetstack/cert-manager
     namespace: cert-manager
     create_namespace: yes
-    version: v1.14.4
-    state: present
+    chart_version: v1.14.4
+    release_state: present
+    update_repo_cache: True
     values:
-      installCRDs: true
+      installCRDs: True
     wait: yes
-    wait_condition:
-      type: Ready
-      status: "True"
-      timeout: 300
+    wait_timeout: 300
 
 - name: Install issuer to dynamically acquire new certificates for services in your cluster
   kubernetes.core.k8s:
