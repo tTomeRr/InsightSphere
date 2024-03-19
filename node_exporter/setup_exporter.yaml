@@ -1,0 +1,22 @@
+- hosts: devops
+  tasks:
+    - name: Install and configure exporter
+      script: /home/ansible/InsightSphere/node_exporter/Automated_Prometheus_Agent_Installation.sh node_exporter
+      become: yes
+      register: script_output
+
+    - debug:
+        msg: "Successfully downloaded the exporter latest version from GitHub!"
+      when: '"Successfully downloaded" in script_output.stdout'
+
+    - fail:
+        msg: "Failed to download the exporter latest version from GitHub. Check internet connection and try again."
+      when: '"Failed to download" in script_output.stdout'
+
+    - debug:
+        msg: "Exporter installation successful"
+      when: '"successfully created" in script_output.stdout'
+
+    - fail:
+        msg: "Exporter installation failed"
+      when: '"run into a problem" is in script_output.stdout'

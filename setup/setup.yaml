@@ -13,3 +13,6 @@
     - role: prometheus
     - role: grafana
     - role: ingress
+    - role: prometheus_scrape_config
+    - role: fetch_grafana_password 
+
