@@ -1,7 +1,7 @@
 #!/bin/bash
 
 exporter_type="$1"
-
+service_already_up=false
 # Add user named after the exporter type
 useradd -M -r -s /bin/false $exporter_type
 
@@ -19,6 +19,7 @@ fi
 tar xvfz ${exporter_type}-latest.tar.gz 
 latest_ver_downloaded=$(ls -d node_exporter-*/ | head -n 1 | awk -F'[-.]' '{print $2 "." $3 "." $4}')
 ver_running=$(${exporter_type} --version 2>&1 | grep 'version' | head -n -1  | awk '{print $3}')
+
 
 if [ ! "$latest_ver_downloaded" == "$ver_running" ]; then
 	# Copy the Exporter binary to the appropriate location and set ownership:
