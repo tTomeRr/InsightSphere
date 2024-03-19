@@ -10,14 +10,14 @@ useradd -M -r -s /bin/false $exporter_type
 wget -O ${exporter_type}-latest.tar.gz $(curl -s https://api.github.com/repos/prometheus/${exporter_type}/releases/latest | grep "browser_download_url.*linux-amd64.tar.gz" | cut -d : -f 2,3 | tr -d \")
 if [ $? -ne 0  ]; then
 	echo "Failed to download the exporter latest version from GitHub (exit code $?) . Check internet connection and try again."
-	exit
+	exit 1
 else
 	echo "Successfully downloaded the exporter latest version from GitHub!"
 fi
 
 # Extracting the compressed archive and saving version number as variable
 tar xvfz ${exporter_type}-latest.tar.gz 
-latest_ver_downloaded=$(ls -d node_exporter-*/ | head -n 1 | awk -F'[-.]' '{print $2 "." $3 "." $4}')
+latest_ver_downloaded=$(ls -d ${exporter_type}-*/ | head -n 1 | awk -F'[-.]' '{print $2 "." $3 "." $4}')
 ver_running=$(${exporter_type} --version 2>&1 | grep 'version' | head -n -1  | awk '{print $3}')
 
 
@@ -107,7 +107,7 @@ while [ $int1 -gt 0 ]; do
 	elif [ $int1 -eq 1 ]; then
 
 		echo "${exporter_type} run into a problem. please check configuration and try again."
-		exit
+		exit 1
 	fi
 	((int1--))
 	sleep 2
