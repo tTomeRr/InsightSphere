@@ -1,0 +1,10 @@
+---
+
+- name: Check if cert-manager is installed
+  command: helm repo list -q
+  register: helm_repo_list
+
+- name: Adding cert-manager repo to local Helm chart and updating helm repo cache
+  command: helm repo add jetstack https://charts.jetstack.io
+  when: 
+

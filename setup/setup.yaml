@@ -8,6 +8,7 @@
     #- role: kind
     #- role: helm
     #- role: cluster
+    - role: cert-manager
     #- role: metallb
     #- role: nginx-ingress
     #- role: prometheus

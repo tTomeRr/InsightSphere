@@ -1,0 +1,37 @@
+---
+
+- name: Install Cert-Manager into your k8s cluster
+  kubernetes.core.helm:
+    name: cert-manager
+    chart_ref: jetstack/cert-manager
+    namespace: cert-manager
+    create_namespace: yes
+    version: v1.14.4
+    state: present
+    values:
+      installCRDs: true
+    wait: yes
+    wait_condition:
+      type: Ready
+      status: "True"
+      timeout: 300
+
+- name: Install issuer to dynamically acquire new certificates for services in your cluster
+  kubernetes.core.k8s:
+    src: issuer.yaml
+    state: present
+    wait: yes
+    wait_condition:
+      type: Ready
+      status: "True"
+      timeout: 300
+
+- name: Adding a certificate for the cluster
+  kubernetes.core.k8s:
+    src: certificate.yaml
+    state: present
+    wait: yes
+    wait_condition:
+      type: Ready
+      status: "True"
+      timeout: 300
