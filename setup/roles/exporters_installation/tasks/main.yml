@@ -1,0 +1,44 @@
+- name: Run the script to install and run the exporters
+  script: automated_prometheus_agent_installation.sh "{{ item }}"
+  loop: "{{ exporters_types }}"
+  become: yes
+  register: script_result
+
+
+- name: Check if exporter is downloaded from GitHub
+  debug:
+     msg: "{{ item.item }} downloaded successfully from GitHub"
+  loop: "{{ script_result.results }}"
+  when: item.rc == 0 and ("Successfully downloaded" in item.stdout)
+  loop_control:
+    label: "{{ item.item }}"
+
+- name: Check if script is not downloaded from GitHub
+  fail:
+    msg: "Failed to download the {{ item.item }} from GitHub. Check internet connection and try again."
+  loop: "{{ script_result.results }}"
+  when: item.rc != 0 or ("Failed to download" in item.stdout)
+  loop_control:
+    label: "{{ item.item }}"
+
+
+- name: Check if script is up and running
+  debug:
+    msg: "{{ item.item }} is up and running"
+  loop: "{{ script_result.results }}"
+  when: item.rc == 0 and ("successfully created" in item.stdout)
+  loop_control:
+    label: "{{ item.item }}"
+
+
+- name: Check if script is not up and running
+  fail:
+    msg: "{{ item.item }} encountered an issue. Please check configuration and try again."
+  loop: "{{ script_result.results }}"
+  when: item.rc != 0 or ("run into a problem" in item.stdout)
+  loop_control:
+    label: "{{ item.item }}"
+
+
+
+

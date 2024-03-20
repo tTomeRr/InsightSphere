@@ -1,0 +1,10 @@
+- name: Run the grafana password script
+  ansible.builtin.script: grafana_password.sh
+
+- name: Give insecure permissions to an existing file
+  ansible.builtin.file:
+    path: grafana_password.txt
+    owner: root
+    group: root
+    mode: '0400'
+
