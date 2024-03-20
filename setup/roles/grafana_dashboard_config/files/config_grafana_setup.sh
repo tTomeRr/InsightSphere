@@ -6,9 +6,8 @@ CUSTOM_GRAFANA_CONFIG_FILE="generate_grafana_configuration.yaml"
 GRAFANA_HELM_CHART_NAME="grafana"
 HELM_CHART_REPO="grafana/grafana"
 
-# Exporters Dashboards
+# Create a dictionary that will hold the exporters dashboards values
 # [id/file, Dashboard name, Dashboard path/ID, Dashboard revision]
-
 declare -A dashboards
 dashboards[node_exporter_arr]='id node_exporter_full 1860 36'
 dashboards[network_arr]='id network_full 12197 1'
@@ -21,7 +20,6 @@ if ! helm list --short | grep -q "$GRAFANA_HELM_CHART_NAME"; then
 	echo "Grafana Helm Chart '$GRAFANA_HELM_CHART_NAME' not found. "
 	exit 1
 fi
-
 
 # Create an empty custom configuration file
 function create_custom_configuration_file() {
@@ -38,7 +36,7 @@ dashboardProviders:
       disableDeletion: false
       editable: true
       options:
-        path: /var/lib/grafana/dashboards/default
+	path: /var/lib/grafana/dashboards/default
       orgId: 1
       type: file
 datasources:
@@ -90,7 +88,7 @@ function add_custom_dashboard_file() {
 		return
 	fi
 
-	 cat << EOF >> "$CUSTOM_GRAFANA_CONFIG_FILE"
+	cat << EOF >> "$CUSTOM_GRAFANA_CONFIG_FILE"
     $dashboard_name:
       url: $dashboard_file_path
 EOF
@@ -102,9 +100,10 @@ EOF
 ###########
 
 
-# Create the custom scraping configuration file
+# Create the custom configuration setup file
 create_custom_configuration_file
 
+# Iterate over the dashboards dictionary and add each dashboard to the configuration file
 for dashboard in "${!dashboards[@]}"; do
 	IFS=' ' read -r -a dashboard_info <<< "${dashboards[$dashboard]}"
 	dashboard_type=${dashboard_info[0]}
@@ -116,8 +115,6 @@ for dashboard in "${!dashboards[@]}"; do
 	elif [ "$dashboard_type" == "file" ]; then
 		add_custom_dashboard_file $dashboard_name $dashboard_id
 	fi
-
-
 done	
 
 # Upgrade the Helm chart with the custom configuration configuration
