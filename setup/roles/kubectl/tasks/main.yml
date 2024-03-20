@@ -10,19 +10,21 @@
     url: https://dl.k8s.io/release/{{ version.content }}/bin/linux/arm/kubectl
     dest: /home/{{ ansible_user }}
   register: kubectl
+  ignore_errors: yes
 
 - name: Remove existing kubectl binary
   file:
     path: /usr/local/bin/kubectl
     state: absent
+  when: kubectl.changed or kubectl.failed
 
 - name: Move kubectl and change permissions
   copy:
-    src: "{{ kubectl.path }}"
+    src: "/home/{{ ansible_user }}/kubectl"
     dest: /usr/local/bin/kubectl
     remote_src: yes
     owner: root
     group: root
     mode: '+x'
+  when: kubectl.changed or kubectl.failed
 
-#TODO check if a newer version of kubectl avaiable then download, else skip this
