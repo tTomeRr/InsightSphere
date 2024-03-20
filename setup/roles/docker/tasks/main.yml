@@ -1,15 +1,21 @@
----
+- name: Check if Docker is installed
+  shell: docker --version >/dev/null 2>&1
+  register: docker_check
+  changed_when: false
+
 - name: Install Docker
   ansible.builtin.dnf:
     name:
       - curl
       - ca-certificates
       - gnupg2
+  when: docker_check.rc != 0
 
 - name: Add Docker's official GPG key
   ansible.builtin.rpm_key:
     state: present
     key: https://download.docker.com/linux/centos/gpg
+  when: docker_check.rc != 0
 
 - name: Add Docker repository
   ansible.builtin.yum_repository:
@@ -19,6 +25,7 @@
     gpgcheck: yes
     gpgkey: https://download.docker.com/linux/centos/gpg
     enabled: yes
+  when: docker_check.rc != 0
 
 - name: Install Docker and related packages
   ansible.builtin.dnf:
@@ -29,17 +36,20 @@
     - docker-ce-cli
     - containerd.io
     - docker-compose
+  when: docker_check.rc != 0
 
 - name: Add Docker group
   ansible.builtin.group:
     name: docker
     state: present
+  when: docker_check.rc != 0
 
 - name: Add user to Docker group
   ansible.builtin.user:
     name: "{{ ansible_user }}"
     groups: docker
     append: true
+  when: docker_check.rc != 0
 
 - name: Enable and start Docker services
   ansible.builtin.systemd:
@@ -49,4 +59,5 @@
   loop:
     - docker.service
     - containerd.service
+  when: docker_check.rc != 0
 

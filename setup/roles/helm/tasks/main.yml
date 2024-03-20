@@ -1,4 +1,8 @@
----
+- name: Check if Helm is installed
+  shell: find / -type f -name helm -executable 2>/dev/null || true
+  register: helm_check
+  changed_when: false
+
 - name: Install Helm if not exists
   unarchive:
     src: https://get.helm.sh/helm-v3.13.1-linux-amd64.tar.gz
@@ -8,6 +12,5 @@
     group: root
     mode: 0755
     remote_src: true
-  args:
-    creates: /usr/local/bin/helm
+  when: helm_check.rc != 0
 
