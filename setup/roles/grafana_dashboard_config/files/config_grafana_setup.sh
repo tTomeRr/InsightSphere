@@ -6,6 +6,15 @@ CUSTOM_GRAFANA_CONFIG_FILE="generate_grafana_configuration.yaml"
 GRAFANA_HELM_CHART_NAME="grafana"
 HELM_CHART_REPO="grafana/grafana"
 
+# Exporters Dashboards
+# [id/file, Dashboard name, Dashboard path/ID, Dashboard revision]
+
+declare -A dashboards
+dashboards[node_exporter_arr]='id node_exporter_full 1860 36'
+dashboards[network_arr]='id network_full 12197 1'
+dashboards[storage_arr]='id storage_full 5119 1'
+dashboards[kubernetes_arr]='id kubernetes_full 13332 12'
+dashboards[proxmox_arr]='id proxmox_full 10347 5'
 
 # Check if the Grafana Helm chart exists
 if ! helm list --short | grep -q "$GRAFANA_HELM_CHART_NAME"; then
@@ -50,7 +59,7 @@ EOF
 # Upgrade the Grafana Helm chart with the custom configurations
 function upgrade_helm_chart() {
 	helm upgrade "$GRAFANA_HELM_CHART_NAME" "$HELM_CHART_REPO" \
-		-f $CUSTOM_GRAFANA_CONFIG_FILE
+		-f "$CUSTOM_GRAFANA_CONFIG_FILE"
 	}
 
 
@@ -76,7 +85,15 @@ EOF
 function add_custom_dashboard_file() {
 	dashboard_name=$1
 	dashboard_file_path=$2
-	dashboard_revision=$3
+
+	if [ ! -e $dashboard_file_path ]; then
+		return
+	fi
+
+	 cat << EOF >> "$CUSTOM_GRAFANA_CONFIG_FILE"
+    $dashboard_name:
+      url: $dashboard_file_path
+EOF
 
 }
 
@@ -88,8 +105,20 @@ function add_custom_dashboard_file() {
 # Create the custom scraping configuration file
 create_custom_configuration_file
 
+for dashboard in "${!dashboards[@]}"; do
+	IFS=' ' read -r -a dashboard_info <<< "${dashboards[$dashboard]}"
+	dashboard_type=${dashboard_info[0]}
+	dashboard_name=${dashboard_info[1]}
+	dashboard_id=${dashboard_info[2]}
+	dashboard_revision=${dashboard_info[3]}
+	if [ "$dashboard_type" == "id" ]; then
+		add_custom_dashboard_id $dashboard_name $dashboard_id $dashboard_revision
+	elif [ "$dashboard_type" == "file" ]; then
+		add_custom_dashboard_file $dashboard_name $dashboard_id
+	fi
 
-add_custom_dashboard_id "node-exporter-dashboard" "1860" "36"
+
+done	
 
 # Upgrade the Helm chart with the custom configuration configuration
 upgrade_helm_chart &> /dev/null && echo "Helm Chart was succesfully updated!" || echo "ERROR: Failed to update Helm chart."
