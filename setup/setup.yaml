@@ -2,11 +2,12 @@
 - name: Deploy Kubernetes cluster with Prometheus and Grafana
   hosts: node_exporters
   roles:
-    #- role: system-upgrade
-    #- role: docker
-    #- role: kubectl
-    #- role: kind
-    #- role: helm
+    - role: system-upgrade
+    - role: docker
+    - role: kubectl
+    - role: kind
+    - role: helm
+    - role: python
     - role: cluster
     - role: cert-manager
     - role: metallb
