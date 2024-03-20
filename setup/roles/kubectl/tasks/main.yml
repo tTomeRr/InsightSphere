@@ -1,29 +1,30 @@
 - name: Check if kubectl is installed
-  command: kubectl version --client
-  register: kubectl_version
-  ignore_errors: true
+  command: command -v kubectl
+  register: kubectl_check
   changed_when: false
+  ignore_errors: true
 
-- name: Download kubectl if not installed
+- name: Get latest kubectl version
   uri:
     url: https://dl.k8s.io/release/stable.txt
     return_content: yes
-  register: kubectl_download
-  when: kubectl_version.rc != 0
+  register: version
+  ignore_errors: true
 
 - name: Download the latest kubectl release
   uri:
     url: https://dl.k8s.io/release/{{ version.content }}/bin/linux/arm/kubectl
     dest: /home/{{ ansible_user }}
   register: kubectl_download
+  when: kubectl_check.rc != 0 or kubectl_installed_version.stdout != version.content
   ignore_errors: true
-  when: kubectl_download.changed
 
 - name: Remove existing kubectl binary
   file:
     path: /usr/local/bin/kubectl
     state: absent
   when: kubectl_download.changed
+  ignore_errors: true
 
 - name: Move kubectl and change permissions
   copy:
@@ -34,4 +35,5 @@
     group: root
     mode: '+x'
   when: kubectl_download.changed
+  ignore_errors: true
 

@@ -1,7 +1,8 @@
 - name: Check if Helm is installed
-  shell: find / -type f -name helm -executable 2>/dev/null || true
+  command: command -v helm
   register: helm_check
   changed_when: false
+  ignore_errors: true
 
 - name: Install Helm if not exists
   unarchive:

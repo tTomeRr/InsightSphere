@@ -1,7 +1,10 @@
+---
 - name: Check if Kind is installed
-  shell: find / -type f -name kind -executable 2>/dev/null || true
+  ansible.builtin.shell:
+    cmd: "command -v kind"
   register: kind_check
   changed_when: false
+  ignore_errors: true
 
 - name: Download Kind if not installed
   ansible.builtin.shell: |
