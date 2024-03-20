@@ -1,6 +1,6 @@
 ---
 - name: Deploy Kubernetes cluster with Prometheus and Grafana
-  hosts: node_exporters
+  hosts: local 
   roles:
     - role: system-upgrade
     - role: docker

@@ -55,7 +55,9 @@ function delete_custom_scrape_file() {
 # Check if the machine can ping the specified client
 function check_connection_to_client() {
 	client="$1"
-	ping -q -c1 "$client" &>/dev/null && return 0 || return 1
+	group="$2"
+
+	ansible -m ping "$group" --limit "$client" &> /dev/null && return 0 || return 1
 }
 
 
@@ -164,7 +166,7 @@ create_custom_scrape_file
 # Iterate over each group and client, check connectivity, and add to scrape configuration if reachable
 for group in node_exporters kubernetes network storage proxmox; do
 	for client in $(./"$READ_INI_SCRIPT_PATH" "$INVENTORY_FILE_PATH" "$group"); do
-		if check_connection_to_client "$client"; then
+		if check_connection_to_client "$client" "$group"; then
 			echo "Ping to $client was successful. Adding it to the Prometheus scrape configuration."
 			add_client_to_configuration "$client" "$group"
 		else
