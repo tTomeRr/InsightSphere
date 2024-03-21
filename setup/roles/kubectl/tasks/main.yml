@@ -11,6 +11,12 @@
   register: version
   ignore_errors: true
 
+- name: Gather installed kubectl version
+  command: kubectl version --client --short
+  register: kubectl_installed_version
+  changed_when: false
+  ignore_errors: true
+
 - name: Download the latest kubectl release
   uri:
     url: https://dl.k8s.io/release/{{ version.content }}/bin/linux/arm/kubectl
