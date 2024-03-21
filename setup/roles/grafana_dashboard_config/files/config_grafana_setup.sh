@@ -36,7 +36,7 @@ dashboardProviders:
       disableDeletion: false
       editable: true
       options:
-	path: /var/lib/grafana/dashboards/default
+        path: /var/lib/grafana/dashboards/default
       orgId: 1
       type: file
 datasources:
