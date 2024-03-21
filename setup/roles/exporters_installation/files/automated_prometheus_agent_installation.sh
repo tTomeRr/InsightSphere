@@ -7,7 +7,13 @@ useradd -M -r -s /bin/false $exporter_type
 
 
 # Download the exporter latest version from GitHub
-wget -O ${exporter_type}-latest.tar.gz $(curl -s https://api.github.com/repos/prometheus/${exporter_type}/releases/latest | grep "browser_download_url.*linux-amd64.tar.gz" | cut -d : -f 2,3 | tr -d \")
+if [ "$exporter_type" == "node_exporter" ]; then
+	wget -O ${exporter_type}-stable.tar.gz "https://github.com/prometheus/node_exporter/releases/download/v1.7.0/node_exporter-1.7.0.linux-amd64.tar.gz"
+else
+	wget -O ${exporter_type}-stable.tar.gz "https://github.com/prometheus/snmp_exporter/releases/download/v0.25.0/snmp_exporter-0.25.0.linux-amd64.tar.gz"
+fi
+
+# Check if exporter downloaded successfully from github
 if [ $? -ne 0  ]; then
 	echo "Failed to download the exporter latest version from GitHub (exit code $?) . Check internet connection and try again."
 	exit 1
@@ -16,12 +22,14 @@ else
 fi
 
 # Extracting the compressed archive and saving version number as variable
-tar xvfz ${exporter_type}-latest.tar.gz 
-latest_ver_downloaded=$(ls -d ${exporter_type}-*/ | head -n 1 | awk -F'[-.]' '{print $2 "." $3 "." $4}')
+tar xvfz ${exporter_type}-stable.tar.gz 
+
+# Saving the stable version of the exporter and the version that is runnig if there is any. 
+stable_ver_downloaded=$(ls -d ${exporter_type}-*/ | head -n 1 | awk -F'[-.]' '{print $2 "." $3 "." $4}')
 ver_running=$(${exporter_type} --version 2>&1 | grep 'version' | head -n -1  | awk '{print $3}')
 
-
-if [ ! "$latest_ver_downloaded" == "$ver_running" ]; then
+# Only starting change if the version running is the same as version downloaded
+if [ ! "$stable_ver_downloaded" == "$ver_running" ]; then
 	# Copy the Exporter binary to the appropriate location and set ownership:
 	cp -rf ${exporter_type}*.linux-amd64/${exporter_type} /usr/local/bin/
 	chown $exporter_type:$exporter_type  /usr/local/bin/$exporter_type
@@ -107,7 +115,7 @@ while [ $int1 -gt 0 ]; do
 	elif [ $int1 -eq 1 ]; then
 
 		echo "${exporter_type} run into a problem. please check configuration and try again."
-		exit 1
+		exit 2
 	fi
 	((int1--))
 	sleep 2
@@ -116,4 +124,4 @@ done
 
 
 # Cleanup files downloaded and extracted
-  rm -rf ${exporter_type}-latest.tar.gz ${exporter_type}-latest ${exporter_type}*.linux-amd64
+  rm -rf ${exporter_type}-stable.tar.gz ${exporter_type}-stable ${exporter_type}*.linux-amd64
