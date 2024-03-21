@@ -1,0 +1,3 @@
+exporters_types:
+  - node_exporter
+  - snmp_exporter
