@@ -6,6 +6,6 @@
     state: present
     definition: "{{ lookup('template', 'templates/{{ item }}') | from_yaml }}"
   loop:
-    - grafana-ingress.yaml.j2
-    - prometheus-ingress.yaml.j2
+    - grafana-ingress.yml.j2
+    - prometheus-ingress.yml.j2
 

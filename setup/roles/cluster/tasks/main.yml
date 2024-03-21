@@ -6,8 +6,8 @@
 
 - name: Copy the Kind cluster configuration file to the managed node
   ansible.builtin.copy:
-    src: prom-graf-cluster.yaml
-    dest: /tmp/prom-graf-cluster.yaml
+    src: prom-graf-cluster.yml
+    dest: /tmp/prom-graf-cluster.yml
 
 - name: Create the Kind Cluster if not exists
   ansible.builtin.shell:
