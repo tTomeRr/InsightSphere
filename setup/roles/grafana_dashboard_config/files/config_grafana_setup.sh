@@ -36,7 +36,7 @@ dashboardProviders:
       disableDeletion: false
       editable: true
       options:
-	path: /var/lib/grafana/dashboards/default
+        path: /var/lib/grafana/dashboards/default
       orgId: 1
       type: file
 datasources:
@@ -122,5 +122,5 @@ upgrade_helm_chart &> /dev/null && echo "Helm Chart was succesfully updated!" ||
 
 
 # Delete the temporary custom configuration configuration file
-delete_custom_configuration_file
+#delete_custom_configuration_file
 

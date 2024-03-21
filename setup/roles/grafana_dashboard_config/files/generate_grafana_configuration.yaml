@@ -1,0 +1,40 @@
+dashboardProviders:
+  dashboardproviders.yaml:
+    apiVersion: 1
+    providers:
+    - name: 'default'
+      orgId: 1
+      folder: ''
+      type: file
+      disableDeletion: false
+      editable: true
+      options:
+        path: /var/lib/grafana/dashboards/default
+      orgId: 1
+      type: file
+datasources:
+  datasources.yaml:
+    apiVersion: 1
+    datasources:
+    - access: proxy
+      name: Prometheus
+      orgId: 1
+      type: prometheus
+      url: http://prometheus.insightsphere.com
+dashboards:
+  default:
+    storage_full:
+      gnetId: 5119
+      revision: 1	
+    node_exporter_full:
+      gnetId: 1860
+      revision: 36	
+    kubernetes_full:
+      gnetId: 13332
+      revision: 12	
+    network_full:
+      gnetId: 12197
+      revision: 1	
+    proxmox_full:
+      gnetId: 10347
+      revision: 5	
