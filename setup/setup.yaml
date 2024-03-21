@@ -7,6 +7,7 @@
     - role: kubectl
     - role: kind
     - role: helm
+    - role: python
     - role: cluster
     - role: cert-manager
     - role: metallb
@@ -15,6 +16,7 @@
     - role: grafana
     - role: ingress
     - role: prometheus_scrape_config
+    - role: grafana_dashboard_config
     #- role: exporters_installation
     - role: fetch_grafana_password 
 
