@@ -14,16 +14,16 @@
   loop_control:
     label: "{{ item.item }}"
 
-- name: Check if script is not downloaded from GitHub
+- name: Check if exporter is not downloaded from GitHub
   fail:
     msg: "Failed to download the {{ item.item }} from GitHub. Check internet connection and try again."
   loop: "{{ script_result.results }}"
-  when: "item.rc is defined and item.rc != 0 or item.stdout is defined and ('Failed to download' in item.stdout)"
+  when: "item.rc is defined and item.rc == 1"
   loop_control:
     label: "{{ item.item }}"
 
 
-- name: Check if script is up and running
+- name: Check if exporter service is up and running
   debug:
     msg: "{{ item.item }} is up and running"
   loop: "{{ script_result.results }}"
@@ -32,11 +32,11 @@
     label: "{{ item.item }}"
 
 
-- name: Check if script is not up and running
+- name: Check if exproter service is not up and running
   fail:
     msg: "{{ item.item }} encountered an issue. Please check configuration and try again."
   loop: "{{ script_result.results }}"
-  when: "item.rc is defined and item.rc != 0 or item.stdout is defined and ('run into a problem' in item.stdout)"
+  when: "item.rc is defined and item.rc == 2"
   loop_control:
     label: "{{ item.item }}"
 
