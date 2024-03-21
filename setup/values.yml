@@ -1,0 +1,12 @@
+prometheus_url: "prometheus.insightsphere.com"
+prometheus_chart_name: "prometheus"
+
+grafana_url: "grafana.insightsphere.com"
+grafana_chart_name: "grafana"
+
+metallb_namespace: "metallb-system"
+
+exporters_types:
+  - "node_exporter"
+  - "snmp_exporter"
+

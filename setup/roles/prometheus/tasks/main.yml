@@ -1,4 +1,6 @@
 ---
+- include_vars: ../../../values.yml
+
 - name: Add the Prometheus helm repository
   ansible.builtin.shell: helm repo add prometheus-community https://prometheus-community.github.io/helm-charts
 

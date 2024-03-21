@@ -1,3 +1,6 @@
+---
+- include_vars: ../../../values.yml
+
 - name: Add the Grafana helm repository
   ansible.builtin.shell: helm repo add grafana https://grafana.github.io/helm-charts
 
