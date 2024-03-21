@@ -1,3 +1,6 @@
+---
+- include_vars: ../../../values.yml
+
 - name: Run the script to install and run the exporters
   script: automated_prometheus_agent_installation.sh "{{ item }}"
   loop: "{{ exporters_types }}"

@@ -1,6 +1,9 @@
 ---
+- include_vars: ../../../values.yml
+
 - name: Add the Prometheus helm repository
-  ansible.builtin.shell: helm repo add prometheus-community https://prometheus-community.github.io/helm-charts
+  ansible.builtin.shell: helm repo add "{{ prometheus_release_name }}" \ 
+                                       "{{  prometheus_chart_url }}"
 
 - name: Update repositories list
   ansible.builtin.shell: helm repo update
@@ -11,7 +14,8 @@
 
 - name: Installing the Prometheus helm chart if not exists
   ansible.builtin.shell: >
-    helm install {{ prometheus_chart_name }} prometheus-community/prometheus \
+    helm install "{{ prometheus_chart_name }}" \
+    "{{ prometheus_release_name }}/{{ prometheus_chart_name }}"
     --set alertmanager.enabled=false \
     --set prometheus-node-exporter.enabled=false \
     --set prometheus-pushgateway.enabled=false \

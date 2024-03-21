@@ -37,11 +37,8 @@ function create_custom_scrape_file() {
 
 # Upgrade the Prometheus Helm chart with custom configurations
 function upgrade_helm_chart() {
-	helm upgrade --install "$PROMETHEUS_HELM_CHART_NAME" "$HELM_CHART_REPO" \
-		--set alertmanager.enabled=false \
-		--set prometheus-node-exporter.enabled=false \
-		--set prometheus-pushgateway.enabled=false \
-		--set kube-state-metrics.enabled=false \
+	helm upgrade "$PROMETHEUS_HELM_CHART_NAME" "$HELM_CHART_REPO" \
+		--reuse-values \
 		--set-file extraScrapeConfigs="$CUSTOM_SCRAPE_CONFIG_PATH"
 }
 

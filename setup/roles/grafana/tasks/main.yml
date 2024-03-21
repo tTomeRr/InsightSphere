@@ -1,6 +1,9 @@
-- name: Add the Grafana helm repository
-  ansible.builtin.shell: helm repo add grafana https://grafana.github.io/helm-charts
+---
+- include_vars: ../../../values.yml
 
+- name: Add the Grafana helm repository
+  ansible.builtin.shell: helm repo add "{{ grafana_release_name }}" \
+                                       "{{ grafana_chart_url }}"
 - name: Update repositories list
   ansible.builtin.shell: helm repo update
 
@@ -9,7 +12,8 @@
   register: helm_charts
 
 - name: Installing the Grafana helm chart if not exists
-  ansible.builtin.shell: "helm install {{ grafana_chart_name }} grafana/grafana"
+  ansible.builtin.shell: "helm install '{{ grafana_chart_name }}' \
+                           '{{ grafana_release_name }}/{{ grafana_chart_name }}'"
   when: grafana_chart_name not in helm_charts.stdout
 
 - name: Check the Nginx Ingress IP address

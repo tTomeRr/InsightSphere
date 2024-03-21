@@ -1,4 +1,6 @@
 ---
+- include_vars: ../../../values.yml
+
 - name: Retrieve the IPv4 Range from the Kind Cluster Network
   ansible.builtin.shell: >
     docker network inspect -f '{{ "{{.IPAM.Config}}" | quote }}' kind
@@ -13,23 +15,25 @@
 - name: Apply MetalLB Base Configuration
   kubernetes.core.k8s:
     state: present
-    namespace: "{{ namespace }}"
-    src: metallb.yaml
+    namespace: "{{ metallb_namespace }}"
+    src: metallb.yml
 
 - name: Wait for MetalLB Components to be Ready
-  shell: "kubectl get pods -o json -n {{ namespace }}"
+  shell: "kubectl get pods -o json -n {{ metallb_namespace }}"
   register: kubectl_get_pods
   until: kubectl_get_pods.stdout|from_json|json_query('items[*].status.phase')|unique == ["Running"]
+  retries: 30 
+  delay: 10
 
 - name: Apply MetalLB L2 Advertisement Configuration
   kubernetes.core.k8s:
     state: present
-    namespace: "{{ namespace }}"
-    src: l2advertisement.yaml
+    namespace: "{{ metallb_namespace }}"
+    src: l2advertisement.yml
 
 - name: Apply MetalLB IP Pool Configuration
   kubernetes.core.k8s:
     state: present
-    namespace: "{{ namespace }}"
-    definition: "{{ lookup('template', 'templates/ip-pool.yaml.j2') | from_yaml }}"
+    namespace: "{{ metallb_namespace }}"
+    definition: "{{ lookup('template', 'templates/ip-pool.yml.j2') | from_yaml }}"
 
