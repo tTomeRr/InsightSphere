@@ -1,8 +1,11 @@
 ---
+- include_vars: ../../../values.yml
+
 - name: Apply Prometheus and Grafana ingress Configuration
   kubernetes.core.k8s:
     state: present
-    src: "{{ item }}"
+    definition: "{{ lookup('template', 'templates/{{ item }}') | from_yaml }}"
   loop:
-    - grafana-ingress.yaml
-    - prometheus-ingress.yaml
+    - grafana-ingress.yaml.j2
+    - prometheus-ingress.yaml.j2
+

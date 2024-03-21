@@ -17,6 +17,6 @@
     - role: ingress
     - role: prometheus_scrape_config
     - role: grafana_dashboard_config
-    #- role: exporters_installation
+    - role: exporters_installation
     - role: fetch_grafana_password 
 

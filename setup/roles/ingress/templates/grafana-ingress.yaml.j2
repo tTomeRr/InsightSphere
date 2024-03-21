@@ -10,10 +10,10 @@ metadata:
 spec:
   tls:
   - hosts:
-    - grafana.insightsphere.com
+    - {{ grafana_url }}
     secretName: insightsphere-tls-secret
   rules:
-  - host: grafana.insightsphere.com
+  - host: {{ grafana_url }} 
     http:
       paths:
       - path: /

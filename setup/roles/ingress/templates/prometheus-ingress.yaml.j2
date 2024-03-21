@@ -10,10 +10,10 @@ metadata:
 spec:
   tls:
   - hosts:
-    - prometheus.insightsphere.com
+    - {{ prometheus_url }}
     secretName: insightsphere-tls-secret
   rules:
-  - host: prometheus.insightsphere.com
+  - host: {{ prometheus_url }}
     http:
       paths:
       - path: /
