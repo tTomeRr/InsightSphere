@@ -2,6 +2,7 @@
   script: automated_prometheus_agent_installation.sh "{{ item }}"
   loop: "{{ exporters_types }}"
   become: yes
+  when: "'node_exporters' in group_names and item == 'node_exporter' or 'network' in group_names and item == 'snmp_exporter'"
   register: script_result
 
 
@@ -9,7 +10,7 @@
   debug:
      msg: "{{ item.item }} downloaded successfully from GitHub"
   loop: "{{ script_result.results }}"
-  when: item.rc == 0 and ("Successfully downloaded" in item.stdout)
+  when: "item.stdout is defined and ('Successfully downloaded' in item.stdout)"
   loop_control:
     label: "{{ item.item }}"
 
@@ -17,7 +18,7 @@
   fail:
     msg: "Failed to download the {{ item.item }} from GitHub. Check internet connection and try again."
   loop: "{{ script_result.results }}"
-  when: item.rc != 0 or ("Failed to download" in item.stdout)
+  when: "item.rc is defined and item.rc != 0 or item.stdout is defined and ('Failed to download' in item.stdout)"
   loop_control:
     label: "{{ item.item }}"
 
@@ -26,7 +27,7 @@
   debug:
     msg: "{{ item.item }} is up and running"
   loop: "{{ script_result.results }}"
-  when: item.rc == 0 and ("successfully created" in item.stdout)
+  when: "item.stdout is defined and ('successfully created' in item.stdout)"
   loop_control:
     label: "{{ item.item }}"
 
@@ -35,7 +36,7 @@
   fail:
     msg: "{{ item.item }} encountered an issue. Please check configuration and try again."
   loop: "{{ script_result.results }}"
-  when: item.rc != 0 or ("run into a problem" in item.stdout)
+  when: "item.rc is defined and item.rc != 0 or item.stdout is defined and ('run into a problem' in item.stdout)"
   loop_control:
     label: "{{ item.item }}"
 
