@@ -47,7 +47,9 @@ datasources:
       name: Prometheus
       orgId: 1
       type: prometheus
-      url: http://prometheus.insightsphere.com
+      url: https://prometheus.insightsphere.com
+      jsonData:
+        tlsSkipVerify: true
 dashboards:
   default:
 EOF
