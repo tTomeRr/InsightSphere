@@ -1,0 +1,12 @@
+---
+  
+- name: Apply alert rules
+  script: apply_alert_rules.sh
+  register: script_output
+
+- name: Show the script output
+  ansible.builtin.debug:
+    var: script_output.stdout
+
+
+
