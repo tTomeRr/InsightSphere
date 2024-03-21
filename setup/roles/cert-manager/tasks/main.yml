@@ -17,9 +17,10 @@
       installCRDs: True
     wait: yes
 
+
 - name: Install issuer to dynamically acquire new certificates for services in your cluster
   kubernetes.core.k8s:
-    src: issuer.yaml
+    src: issuer.yml
     state: present
     wait: yes
     wait_condition:
@@ -28,9 +29,6 @@
 
 - name: Adding a certificate for the cluster
   kubernetes.core.k8s:
-    src: certificate.yaml
+    src: certificate.yml
     state: present
     wait: yes
-    wait_condition:
-      type: Ready
-      status: "True"
