@@ -1,14 +1,6 @@
 apiVersion: cert-manager.io/v1
 kind: ClusterIssuer
 metadata:
-  name: letsencrypt-production
+  name: selfsigned-clusterissuer
 spec:
-  acme:
-    server: https://acme-v02.api.letsencrypt.org/directory
-    email: insightsphereproject@gmail.com
-    privateKeySecretRef:
-      name: letsencrypt-production
-    solvers:
-      - http01:
-          ingress:
-            class: nginx
+  selfSigned: {}
