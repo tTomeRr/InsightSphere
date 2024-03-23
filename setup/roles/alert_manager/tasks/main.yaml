@@ -2,6 +2,7 @@
   
 - name: Apply alert rules
   script: apply_alert_rules.sh
+  become: true
   register: script_output
 
 - name: Show the script output

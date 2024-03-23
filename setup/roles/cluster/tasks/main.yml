@@ -11,5 +11,5 @@
 
 - name: Create the Kind Cluster if not exists
   ansible.builtin.shell:
-    cmd: "kind create cluster --config /tmp/prom-graf-cluster.yaml"
+    cmd: "kind create cluster --config /tmp/prom-graf-cluster.yml"
   when: "'prom-graf-cluster' not in kind_clusters.stdout"
