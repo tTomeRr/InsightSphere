@@ -15,7 +15,7 @@
     #- role: prometheus
     #- role: grafana
     #- role: ingress
-    # - role: prometheus_scrape_config
+    #- role: prometheus_scrape_config
     #- role: grafana_dashboard_config
     - role: alert_manager
 
