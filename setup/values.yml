@@ -8,6 +8,8 @@ grafana_chart_name: "grafana"
 grafana_release_name: "grafana"
 grafana_chart_url: "https://grafana.github.io/helm-charts"
 
+alertmanager_url: "alertmanager.insightsphere.com"
+
 metallb_namespace: "metallb-system"
 
 exporters_types:
