@@ -36,3 +36,14 @@
     line: "{{ nginx_ingress_ip.stdout }}    {{ prometheus_url }}"
   when: grep_result.rc != 0
 
+- name: Check if the AlertManager server URL is in /etc/hosts
+  ansible.builtin.command: "grep -q '{{ nginx_ingress_ip.stdout }}    {{ alertmanager_url }}' /etc/hosts"
+  register: grep_result
+  ignore_errors: true
+
+- name: Add the AlertManager server URL to /etc/hosts
+  ansible.builtin.lineinfile:
+    path: /etc/hosts
+    line: "{{ nginx_ingress_ip.stdout }}    {{ alertmanager_url }}"
+  when: grep_result.rc != 0
+

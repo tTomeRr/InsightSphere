@@ -10,10 +10,10 @@ metadata:
 spec:
   tls:
   - hosts:
-    - alertmanager.insightsphere.com
+    - {{ alertmanager_url }}
     secretName: insightsphere-tls-secret
   rules:
-  - host: alertmanager.insightsphere.com
+  - host: {{ alertmanager_url }}
     http:
       paths:
       - path: /
@@ -22,5 +22,5 @@ spec:
           service:
             name: prometheus-alertmanager
             port:
-              number: 9093
+              number: 80
 
