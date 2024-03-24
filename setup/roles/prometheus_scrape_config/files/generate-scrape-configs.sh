@@ -150,6 +150,16 @@ function add_kubernetes_exporter() {
 EOF
 }
 
+function add_alertmanager_server() {
+
+        cat <<EOF >> "$CUSTOM_SCRAPE_CONFIG_PATH"
+
+- job_name: 'alert-manager Server'
+  static_configs:
+  - targets: ['prometheus-alertmanager:9093']
+EOF
+}
+
 
 ###########
 # Main script execution starts here
@@ -158,7 +168,7 @@ EOF
 
 # Create the custom scraping configuration file
 create_custom_scrape_file
-
+add_alertmanager_server
 
 # Iterate over each group and client, check connectivity, and add to scrape configuration if reachable
 for group in node_exporters kubernetes network storage proxmox; do
@@ -180,8 +190,4 @@ upgrade_helm_chart &> /dev/null && echo "Helm Chart was succesfully updated!" ||
 
 # Delete the temporary custom scrape configuration file
 delete_custom_scrape_file
-
-
-# Restart Prometheus to apply the new configuration
-killall -HUP prometheus
 
