@@ -16,7 +16,6 @@
   ansible.builtin.shell: >
     helm install "{{ prometheus_chart_name }}" \
     "{{ prometheus_release_name }}/{{ prometheus_chart_name }}"
-    --set alertmanager.enabled=false \
     --set prometheus-node-exporter.enabled=false \
     --set prometheus-pushgateway.enabled=false \
     --set kube-state-metrics.enabled=false

@@ -11,3 +11,4 @@ spec:
   dnsNames:
     - grafana.insightsphere.com
     - prometheus.insightsphere.com
+    - alertmanager.insightsphere.com
