@@ -4,6 +4,8 @@
   roles:
     - role: system-upgrade
       tags: [system-upgrade, prerequisites]
+    - role: python
+      tags: [python, prerequisites]
     - role: docker
       tags: [docker, prerequisites]
     - role: kubectl
@@ -12,8 +14,6 @@
       tags: [kind, prerequisites]
     - role: helm
       tags: [helm, prerequisites]
-    - role: python
-      tags: [python, prerequisites]
     - role: cluster
       tags: [cluster, cluster-setup]
     - role: cert-manager
