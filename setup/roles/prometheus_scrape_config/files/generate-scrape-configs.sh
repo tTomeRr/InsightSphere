@@ -52,9 +52,7 @@ function delete_custom_scrape_file() {
 # Check if the machine can ping the specified client
 function check_connection_to_client() {
 	client="$1"
-	group="$2"
-
-	ansible -m ping "$group" --limit "$client" &> /dev/null && return 0 || return 1
+	ping -q -c1 "$client" &>/dev/null && return 0 || return 1
 }
 
 
