@@ -8,9 +8,8 @@ CUSTOM_RULE_CONFIG_PATH="alerting_rules.yml"
 # Create an empty custom scrape configuration file
 function create_custom_rule_file() {
 	cat <<EOF > $CUSTOM_RULE_CONFIG_PATH
-alertmanager:
-  enable: true
-  config:
+serverFiles:
+  alerting_rules.yml:
     groups:
 $(echo "$ALERTING_RULES" | sed 's/^/    /')
 EOF
