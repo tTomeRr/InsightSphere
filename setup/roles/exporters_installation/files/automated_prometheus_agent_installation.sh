@@ -93,7 +93,23 @@ fi
 
 # Start and enable the $(exporter_type) service:
 systemctl enable --now ${exporter_type}.service
+if [ "$exporter_type" == "kubernetes" ]
+        # Add Prometheus Community Helm repository
+        helm repo add prometheus-community https://prometheus-community.github.io/helm-charts
+        echo "Updating help repo."
+        # Update Helm repositories
+        helm repo update
+        echo "Install kube-statemerics."
+        # Install kube-state-metrics chart in kube-system namespace
+        helm install kube-state-metrics prometheus-community/kube-state-metrics -n kube-system
+        # Set up port forwarding for kube-state-metrics service in the background
+        nohup kubectl port-forward svc/kube-state-metrics -n kube-system 8080:8080 --address 0.0.0.0 > /dev/null 2>&1 &
+        # Optionally, you can add a sleep command to give some time for the port forwarding to start
+        sleep 5
 
+        # Print a message indicating that port forwarding is running in the background
+        echo "Port forwarding for kube-state-metrics is running in the background."
+fi
 int1=20
 while [ $int1 -gt 0 ]; do
 
