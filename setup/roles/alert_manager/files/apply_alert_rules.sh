@@ -3,14 +3,13 @@
 PROMETHEUS_HELM_CHART_NAME="prometheus"
 HELM_CHART_REPO="prometheus-community/prometheus"
 ALERTING_RULES=$(for file in roles/alert_manager/files/*.yml; do cat "$file"; echo; done)
-CUSTOM_RULE_CONFIG_PATH="alerting_rules.yml"
+CUSTOM_RULE_CONFIG_PATH="/home/promk8s/alerting_rules.yml"
 
 # Create an empty custom scrape configuration file
 function create_custom_rule_file() {
 	cat <<EOF > $CUSTOM_RULE_CONFIG_PATH
-alertmanager:
-  enable: true
-  config:
+serverFiles:
+  alerting_rules.yml:
     groups:
 $(echo "$ALERTING_RULES" | sed 's/^/    /')
 EOF
