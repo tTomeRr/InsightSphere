@@ -4,6 +4,11 @@
     name: python3
     state: present
 
+- name: Ensure pip3 is installed
+    ansible.builtin.dnf:
+      name: python3-pip
+      state: present
+
 - name: Upgrade pip
   ansible.builtin.pip:
     name: pip
@@ -11,7 +16,7 @@
     executable: pip3
 
 - name: Install required Python libraries
-  pip:
+  ansible.builtin.pip:
     name:
       - kubernetes
       - jmespath
