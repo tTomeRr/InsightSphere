@@ -1,0 +1,57 @@
+---
+- include_vars: ../../../values.yml
+- include_vars: ../../../grafana_password.yml
+
+- name: Check connection (GET) to a the Prometheus site and it returns a status 200
+  ansible.builtin.uri:
+    url: "https://{{ prometheus_url }}"
+    validate_certs: false
+  register: result
+  until: result.status == 200
+  retries: 10
+  delay: 5 
+
+- name: Check connection (GET) to a the Grafana site and it returns a status 200
+  ansible.builtin.uri:
+    url: "https://{{ grafana_url }}"
+    validate_certs: false
+  register: result
+  until: result.status == 200
+  retries: 10
+  delay: 5 
+
+- name: Check connection (GET) to a the Alert Manager site and it returns a status 200
+  ansible.builtin.uri:
+    url: "https://{{ alertmanager_url }}"
+    validate_certs: false
+  register: result
+  until: result.status == 200
+  retries: 10
+  delay: 5 
+
+- name: Login to the Grafana webpage
+  ansible.builtin.uri:
+    url: "https://{{ grafana_url }}/login"
+    validate_certs: false
+    method: POST
+    body_format: json
+    headers:
+      Content-Type: "application/json"
+    body: 
+      user: "admin"
+      password: "{{ GRAFANA_PASSWORD }}"
+    status_code: 200
+    return_content: yes
+  register: login
+
+- name: Save the cookie
+  set_fact:
+    grafana_cookie: "{{ login.cookies.grafana_session }}"
+
+- name: Add the cookie to the browser with Selenium
+  command: python3 roles/web_access/files/grafana_selenium.py
+  environment:
+    grafana_url: "{{ lookup('env', 'grafana_url') }}"
+    grafana_cookie_value: "{{ lookup('env', 'grafana_cookie_value') }}"
+  ignore_errors: yes
+

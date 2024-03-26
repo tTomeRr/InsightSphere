@@ -3,7 +3,7 @@
 
 - name: Give insecure permissions to an existing file
   ansible.builtin.file:
-    path: grafana_password.txt
+    path: grafana_password.yml
     owner: root
     group: root
     mode: '0400'
