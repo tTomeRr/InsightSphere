@@ -41,7 +41,8 @@ By combining Grafana and Prometheus, this project aims to implement a robust mon
 
 ## Usage
 
-Visit [Prometheus](https://prometheus.insightsphere.com) and [Grafana](https://grafana.insightsphere.com) on your web browser.
+Visit [https://prometheus.insightsphere.com](https://prometheus.insightsphere.com) and [https://grafana.insightsphere.com](https://grafana.insightsphere.com) on your web browser.
+
 
 #Use this space to show useful examples of how a project can be used. Additional screenshots, code examples and demos work well in this space. You may also link to more resources
 
