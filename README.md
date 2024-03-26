@@ -84,11 +84,12 @@ Email: [Insightsphere@net-shopping.com](mailto:Insightsphere@net-shopping.com)
 
 Resources we find useful and would like to give credit to:
 
-1) [prometheus-community/helm-charts](https://github.com/prometheus-community/helm-charts)
-2) [grafana/helm-charts](https://github.com/grafana/helm-charts)
-3) [prometheus/snmp_exporter](https://github.com/prometheus/snmp_exporter)
-4) [Using Prometheus with SNMP Exporter to Monitor Cisco IOS XR, Nokia SR OS, and Arista EOS Network Devices](https://karneliuk.com/2023/01/tools-12-using-prometheus-with-snmp-exporter-to-monitor-cisco-ios-xr-nokia-sr-os-and-arista-eos-network-devices/)
-5) [cert-manager Documentation: Using Prometheus Metrics](https://cert-manager.io/docs/tutorials/acme/nginx-ingress/)
-6) [Prometheus Alerts Using Prometheus Community Helm Chart](https://home.robusta.dev/blog/prometheus-alerts-using-prometheus-community-helm-chart)
-7) [Prometheus Monitoring and Alerting with OpsRamp](https://www.opsramp.com/guides/prometheus-monitoring/prometheus-alerting/)
+- [prometheus-community/helm-charts](https://github.com/prometheus-community/helm-charts)
+- [grafana/helm-charts](https://github.com/grafana/helm-charts)
+- [prometheus/snmp_exporter](https://github.com/prometheus/snmp_exporter)
+- [Using Prometheus with SNMP Exporter to Monitor Cisco IOS XR, Nokia SR OS, and Arista EOS Network Devices](https://karneliuk.com/2023/01/tools-12-using-prometheus-with-snmp-exporter-to-monitor-cisco-ios-xr-nokia-sr-os-and-arista-eos-network-devices/)
+- [cert-manager Documentation: Using Prometheus Metrics](https://cert-manager.io/docs/tutorials/acme/nginx-ingress/)
+- [Prometheus Alerts Using Prometheus Community Helm Chart](https://home.robusta.dev/blog/prometheus-alerts-using-prometheus-community-helm-chart)
+- [Prometheus Monitoring and Alerting with OpsRamp](https://www.opsramp.com/guides/prometheus-monitoring/prometheus-alerting/)
+- [Create a Grafana Dashboard for StorageGRID](https://docs.netapp.com/us-en/storagegrid-enable/tools-apps-guides/federate-prometheus.html#create-a-grafana-dashboard-for-storagegrid)
       
