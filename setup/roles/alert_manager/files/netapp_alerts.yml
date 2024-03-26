@@ -1,0 +1,31 @@
+- name: netapp_alerts
+  rules:
+    - alert: DiskUsageTooHigh
+      expr: netapp_disk_usage_percent > 90
+      for: 5m
+      labels:
+        severity: critical
+      annotations:
+        summary: "High disk usage on {{ $labels.instance }}"
+        description: "{{ $labels.instance }} has disk usage {{ $value }}% which is above 90%"
+
+    - alert: DiskFailureDetected
+      expr: netapp_disk_status != 0
+      for: 5m
+      labels:
+        severity: critical
+      annotations:
+        summary: "Disk failure detected on {{ $labels.instance }}"
+        description: "A disk has failed on {{ $labels.instance }}."
+
+    - alert: HighNetworkLatency
+      expr: netapp_network_latency_ms > 50
+      for: 15m
+      labels:
+        severity: warning
+      annotations:
+        summary: "High network latency on {{ $labels.instance }}"
+        description: "Network latency on {{ $labels.instance }} is above 50ms for 15 minutes."
+
+ 
+
