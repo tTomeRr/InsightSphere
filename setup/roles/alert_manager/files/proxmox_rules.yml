@@ -1,0 +1,18 @@
+- name: proxmox_alerts
+  rules:
+  - alert: ProxmoxHighCPUUsage
+    expr: avg by (instance) (irate(node_cpu_seconds_total{job="proxmox", mode="user"}[5m])) * 100 > 80
+    for: 10m
+    labels:
+      severity: warning
+    annotations:
+      summary: "High CPU usage on Proxmox node (instance {{ $labels.instance }})"
+      description: "CPU usage on Proxmox node {{ $labels.instance }} has exceeded 80% for more than 10 minutes."
+  - alert: ProxmoxHighDiskUsage
+    expr: (node_filesystem_size_bytes{job="proxmox", mountpoint="/"} - node_filesystem_free_bytes{job="proxmox", mountpoint="/"}) / node_filesystem_size_bytes{job="proxmox", mountpoint="/"} * 100 > 80
+    for: 15m
+    labels:
+      severity: warning
+    annotations:
+      summary: "High disk usage on Proxmox node (instance {{ $labels.instance }})"
+      description: "Disk usage on the root filesystem of Proxmox node {{ $labels.instance }} has exceeded 80% for more than 15 minutes."

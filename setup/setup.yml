@@ -38,7 +38,7 @@
       tags: [fetch_grafana_password, configuration]
 
 - name: Run exporters_installation on specific hosts
-  hosts: node_exporters:network
+  hosts: node_exporters:network:kubernetes:proxmox:storage
   roles:
     - role: exporters_installation
       tags: exporters_installation
