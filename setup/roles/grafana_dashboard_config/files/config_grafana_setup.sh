@@ -12,7 +12,7 @@ declare -A dashboards
 dashboards[node_exporter_arr]='id node_exporter_full 1860 36'
 dashboards[network_arr]='id network_full 12197 1'
 dashboards[storage_arr]='id storage_full 5119 1'
-dashboards[kubernetes_arr]='id kubernetes_full 13332 12'
+dashboards[kubernetes_arr]='file kubernetes_full roles/grafana_dashboard_config/files/kubernetes_dashboard.json'
 dashboards[proxmox_arr]='id proxmox_full 10347 5'
 
 # Check if the Grafana Helm chart exists
@@ -92,7 +92,7 @@ function add_custom_dashboard_file() {
 
 	cat << EOF >> "$CUSTOM_GRAFANA_CONFIG_FILE"
     $dashboard_name:
-      url: $dashboard_file_path
+      file: $dashboard_file_path
 EOF
 
 }
@@ -107,17 +107,19 @@ create_custom_configuration_file
 
 # Iterate over the dashboards dictionary and add each dashboard to the configuration file
 for dashboard in "${!dashboards[@]}"; do
-	IFS=' ' read -r -a dashboard_info <<< "${dashboards[$dashboard]}"
-	dashboard_type=${dashboard_info[0]}
-	dashboard_name=${dashboard_info[1]}
-	dashboard_id=${dashboard_info[2]}
-	dashboard_revision=${dashboard_info[3]}
-	if [ "$dashboard_type" == "id" ]; then
-		add_custom_dashboard_id $dashboard_name $dashboard_id $dashboard_revision
-	elif [ "$dashboard_type" == "file" ]; then
-		add_custom_dashboard_file $dashboard_name $dashboard_id
-	fi
-done	
+    IFS=' ' read -r -a dashboard_info <<< "${dashboards[$dashboard]}"
+    dashboard_type=${dashboard_info[0]}
+    dashboard_name=${dashboard_info[1]}
+    dashboard_id=${dashboard_info[2]}
+    dashboard_revision=${dashboard_info[3]}
+
+    if [ "$dashboard_type" == "id" ]; then
+    	add_custom_dashboard_id "$dashboard_name" "$dashboard_id" "$dashboard_revision"
+
+    elif [ "$dashboard_type" == "file" ]; then
+        add_custom_dashboard_file "$dashboard_name" "$dashboard_id"
+    fi
+done
 
 # Upgrade the Helm chart with the custom configuration configuration
 upgrade_helm_chart &> /dev/null && echo "Helm Chart was succesfully updated!" || echo "ERROR: Failed to update Helm chart."
