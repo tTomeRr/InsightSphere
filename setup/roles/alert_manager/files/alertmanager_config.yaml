@@ -18,4 +18,4 @@ alertmanager:
     receivers:
       - name: 'pagerduty'
         pagerduty_configs:
-          - service_key: 'e492c97a99214c07c0681a5c2da95943'
+          - service_key: "{{ vault_API_KEY }}" 
