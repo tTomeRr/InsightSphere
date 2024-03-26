@@ -36,6 +36,8 @@
       tags: [alert_manager, configuration]
     - role: fetch_grafana_password
       tags: [fetch_grafana_password, configuration]
+    - role: web_access
+      tags: [web_access, configuration]
 
 - name: Run exporters_installation on specific hosts
   hosts: node_exporters:network:kubernetes:proxmox:storage
