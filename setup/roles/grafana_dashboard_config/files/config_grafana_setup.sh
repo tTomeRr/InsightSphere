@@ -12,7 +12,7 @@ declare -A dashboards
 dashboards[node_exporter_arr]='id node_exporter_full 1860 36'
 dashboards[network_arr]='id network_full 12197 1'
 dashboards[storage_arr]='id storage_full 5119 1'
-dashboards[kubernetes_arr]='id kubernetes_full 13332 12'
+dashboards[kubernetes_arr]='file kubernetes_full roles/grafana_dashboard_config/files/dashboards/kubernetes_dashboard.json' 
 dashboards[proxmox_arr]='id proxmox_full 10347 5'
 
 # Check if the Grafana Helm chart exists
@@ -89,10 +89,11 @@ function add_custom_dashboard_file() {
 	if [ ! -e $dashboard_file_path ]; then
 		return
 	fi
-
+	dashboard_json=$(jq -c . $dashboard_file_path)
 	cat << EOF >> "$CUSTOM_GRAFANA_CONFIG_FILE"
     $dashboard_name:
-      url: $dashboard_file_path
+      json: |
+        ${dashboard_json}
 EOF
 
 }
