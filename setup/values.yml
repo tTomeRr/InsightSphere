@@ -19,3 +19,11 @@ exporters_types:
   - "proxmox"
   - "storage"
 
+helm_version: "v3.13.1"
+kubectl_version: "v1.29.3"
+kind_version: "v0.22.0"
+docker_ce_version: "3:26.0.0-1.fc39.x86_64"
+docker_ce_cli_version: "1:26.0.0-1.fc39.x86_64"
+containerd_io_version: "1.6.28-3.2.fc39.x86_64"
+docker_compose_version: "1.29.2-10.fc39.noarch"
+

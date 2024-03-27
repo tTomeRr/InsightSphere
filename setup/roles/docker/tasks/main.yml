@@ -1,3 +1,6 @@
+---
+- include_vars: ../../../values.yml
+
 - name: Check if Docker is installed
   shell: docker --version >/dev/null 2>&1
   register: docker_installed
@@ -33,11 +36,12 @@
     name: "{{ item }}"
     state: present
   loop:
-    - docker-ce
-    - docker-ce-cli
-    - containerd.io
-    - docker-compose
+    - "docker-ce-{{ docker_ce_version }}"
+    - "docker-ce-cli-{{ docker_ce_cli_version }}"
+    - "containerd.io-{{ containerd_io_version }}"
+    - "docker-compose-{{ docker_compose_version }}"
   when: docker_installed.rc != 0
+
 
 - name: Add Docker group
   ansible.builtin.group:

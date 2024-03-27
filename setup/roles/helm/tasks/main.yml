@@ -1,3 +1,6 @@
+---
+- include_vars: ../../../values.yml
+
 - name: Check if Helm is installed
   command: command -v helm
   register: helm_check
@@ -6,7 +9,7 @@
 
 - name: Install Helm if not exists
   unarchive:
-    src: https://get.helm.sh/helm-v3.13.1-linux-amd64.tar.gz
+    src: 'https://get.helm.sh/helm-"{{ helm_version }}"-linux-amd64.tar.gz'
     dest: /usr/local/bin
     extra_opts: "--strip-components=1"
     owner: root
