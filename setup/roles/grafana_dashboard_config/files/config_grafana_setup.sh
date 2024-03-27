@@ -92,7 +92,8 @@ function add_custom_dashboard_file() {
 
 	cat << EOF >> "$CUSTOM_GRAFANA_CONFIG_FILE"
     $dashboard_name:
-      file: $dashboard_file_path
+      json: | 
+	$(dashboard_file_path)
 EOF
 
 }
