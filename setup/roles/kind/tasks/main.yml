@@ -10,10 +10,10 @@
 
 - name: Download Kind if not installed
   ansible.builtin.shell: |
-    'curl -Lo ./kind https://kind.sigs.k8s.io/dl/"{{ kind_version }}"/kind-linux-amd64'
+    curl -Lo ./kind https://kind.sigs.k8s.io/dl/{{ kind_version }}/kind-linux-amd64
     chmod +x ./kind
     mv ./kind /usr/local/bin/kind
   args:
     creates: /usr/local/bin/kind
   when: kind_check.rc != 0
-
+  

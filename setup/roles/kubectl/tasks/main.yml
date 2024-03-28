@@ -9,18 +9,16 @@
 
 - name: Download the latest kubectl release
   uri:
-    url: 'https://dl.k8s.io/release/"{{ kubectl_version }}"/bin/linux/arm/kubectl'
+    url: 'https://dl.k8s.io/release/{{ kubectl_version }}/bin/linux/arm/kubectl'
     dest: /home/{{ ansible_user }}
   register: kubectl_download
   when: kubectl_check.rc != 0
-  ignore_errors: true
 
 - name: Remove existing kubectl binary
   file:
     path: /usr/local/bin/kubectl
     state: absent
   when: kubectl_download.changed
-  ignore_errors: true
 
 - name: Move kubectl and change permissions
   copy:
@@ -31,5 +29,4 @@
     group: root
     mode: '+x'
   when: kubectl_download.changed
-  ignore_errors: true
 
