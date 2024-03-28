@@ -1,4 +1,7 @@
 ---
+- name: Include AlertManager API variables
+  include_vars:
+    file: alertmanager_api.yml
   
 - name: Apply alert rules
   script: apply_alert_rules.sh
@@ -8,7 +11,19 @@
   ansible.builtin.debug:
     var: script_output.stdout
 
+- name: Create AlertManager configuration file
+  ansible.builtin.template:
+    src: alertmanager_config.yaml.j2
+    dest: alertmanager_config.yaml
+
 
 - name: Apply AlertManager configuration
-  shell: helm upgrade prometheus prometheus-community/prometheus -f {{ role_path }}/files/alertmanager_config.yaml --reuse-values
+  shell: helm upgrade prometheus prometheus-community/prometheus -f alertmanager_config.yaml --reuse-values
+
+
+- name: Delete AlertManager configuration file
+  ansible.builtin.file:
+    path: alertmanager_config.yaml
+    state: absent
+
 

@@ -9,6 +9,7 @@
   when: >-
     (item == 'node_exporter' and 'node_exporters' in group_names) or
     (item == 'snmp_exporter' and 'network' in group_names) or
+    (item == 'network' and 'network' in group_names) or
     (item == 'kubernetes' and 'kubernetes' in group_names) or
     (item == 'proxmox' and 'proxmox' in group_names) or
     (item == 'storage' and 'storage' in group_names)
