@@ -1,9 +1,11 @@
 ## Insight Sphere - Monitoring Made Efforless
 
+<img src="https://github.com/tTomeRr/InsightSphere/assets/129614080/8d0c46b5-e045-43b7-9526-6a157c689e23" 
+    align="right" alt="InsightSphere" width="140" height="178">
+
 About The Project:
 
 By combining Grafana and Prometheus, this project aims to implement a robust monitoring solution for hosting environments. Grafana, a powerful data visualization and       monitoring platform, pairs seamlessly with Prometheus, a leading open-source toolkit designed for modern cloud-native environments. Together, they offer a comprehensive,   customizable, and reliable monitoring solution tailored to your hosting needs. This fusion enables you to proactively identify and address potential issues while ensuring  optimal performance and reliability.
-
 
 
 ## Built With:
@@ -11,6 +13,10 @@ By combining Grafana and Prometheus, this project aims to implement a robust mon
 * [<img src="https://upload.wikimedia.org/wikipedia/commons/thumb/3/3b/Grafana_icon.svg/32px-Grafana_icon.svg.png" width="30" height="30">](https://grafana.com/) [Grafana](https://grafana.com/)
 * [<img src="https://www.pagerduty.com/favicon.ico" width="30" height="30">](https://www.pagerduty.com/) [PagerDuty](https://www.pagerduty.com/)
 * [<img src="https://kubernetes.io/images/favicon.png" width="30" height="30">](https://kubernete.io/) [Kubernetes](https://kubernetes.io/)
+
+## Project Architcture
+
+![image](https://github.com/tTomeRr/InsightSphere/assets/129614080/61ca20b4-fc66-40d6-bfbe-52913317f1ea)
 
 
 
@@ -21,22 +27,15 @@ By combining Grafana and Prometheus, this project aims to implement a robust mon
 
     `git clone https://github.com/tTomeRr/InsightSphere.git`
 
-
 2. Navigate to the repository in your computer
-
 
 3. Go to the setup directory.
 
     `cd setup`
 
-
 4. Run the setup.yaml ansible playbook.
 
     `ansible-playbook setup.yaml`
-
-
-
-
 
 
 ## Usage
@@ -44,10 +43,33 @@ By combining Grafana and Prometheus, this project aims to implement a robust mon
 Visit [https://prometheus.insightsphere.com](https://prometheus.insightsphere.com) and [https://grafana.insightsphere.com](https://grafana.insightsphere.com) on your web browser.
 
 
-#Use this space to show useful examples of how a project can be used. Additional screenshots, code examples and demos work well in this space. You may also link to more resources
+## Usage
+
+1. **Cluster Configuration:**
+   - After running the Ansible playbook, a cluster will be set up with the following pods:
+     - Prometheus
+     - Grafana
+     - Alertmanager
+     - Certmanager
+     - Nginx
+     - Metallb
+
+2. **Accessing the Monitoring Interface:**
+   - After deployment, access the following websites on your web browser:
+     - [https://prometheus.insightsphere.com](https://prometheus.insightsphere.com)
+     - [https://grafana.insightsphere.com](https://grafana.insightsphere.com)
+     - [https://alertmanager.insightsphere.com](https://alertmanager.insightsphere.com)
+
+2. **Exporters Configuration:**
+   - Edit the `inventory.ini` file to specify the exporters you want to scrape data from.
+   - For example, to enable Prometheus to scrape data from 'machine1' using the Node Exporter, add 'machine1' to the 'node_exporters' group in the inventory file.
+     This configuration not only configures the Prometheus server but also download and set up the Node Exporter on 'machine1' for data collection.
+
+3. **Grafana Password:**
+   - Retrieve the Grafana server password by opening `grafana_password.yml` with Ansible Vault. The username is admin.
 
 
-
+- **Note:** Modify configuration values in the `values.yml` file if needed (optional).
 
 
 ## Contributing
@@ -63,21 +85,9 @@ Should you have any suggestions for improvement, feel free to fork the repositor
 5. Open a Pull Request
 
 
-
-
 ## License
 
 Distributed under the MIT License. See `LICENSE.txt` for more information.
-
-
-
-## Contact
-
-Email: [Insightsphere@net-shopping.com](mailto:Insightsphere@net-shopping.com)
-
-**Project Link:** [https://github.com/tTomeRr/InsightSphere](https://github.com/tTomeRr/InsightSphere)
-
-
 
 
 ## Acknowledgments
