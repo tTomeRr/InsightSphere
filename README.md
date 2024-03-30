@@ -35,7 +35,7 @@ By combining Grafana and Prometheus, this project aims to implement a robust mon
 
 4. Run the setup.yaml ansible playbook.
 
-    `ansible-playbook setup.yaml`
+    `ansible-playbook setup.yml`
 
 ## Usage
 
