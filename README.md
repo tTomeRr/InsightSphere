@@ -37,12 +37,6 @@ By combining Grafana and Prometheus, this project aims to implement a robust mon
 
     `ansible-playbook setup.yaml`
 
-
-## Usage
-
-Visit [https://prometheus.insightsphere.com](https://prometheus.insightsphere.com) and [https://grafana.insightsphere.com](https://grafana.insightsphere.com) on your web browser.
-
-
 ## Usage
 
 1. **Cluster Configuration:**
