@@ -1,0 +1,96 @@
+---
+- include_vars: ../../../values.yml
+
+- name: Run the script to install and run the exporters
+  script: automated_prometheus_agent_installation.sh "{{ item }}"
+  loop: "{{ exporters_types }}"
+  register: script_output
+  ignore_errors: true
+  when: >-
+    (item == 'node_exporter' and 'node_exporters' in group_names) or
+    (item == 'snmp_exporter' and 'network' in group_names) or
+    (item == 'network' and 'network' in group_names) or
+    (item == 'kubernetes' and 'kubernetes' in group_names) or
+    (item == 'proxmox' and 'proxmox' in group_names) or
+    (item == 'storage' and 'storage' in group_names)
+    
+- name: Check if script downloaded the exporter successfully
+  debug:
+    msg: "Exporter was downloaded successfully."
+  when: 
+    - item.changed
+    - "'SUCCESS' in item.stdout"
+  loop: "{{ script_output.results }}"
+  loop_control:
+    label: "{{ item.item }}"
+
+- name: Handle error when no argument is provided
+  debug:
+    msg: "Error: No argument provided."
+  when: 
+    - item.changed
+    - "'ERROR: No argument provided' in item.stdout"
+  loop: "{{ script_output.results }}"
+  loop_control:
+    label: "{{ item.item }}"
+
+- name: Handle error when invalid exporter type is provided
+  debug:
+    msg: "Error: Invalid exporter type or unsupported type in download function."
+  when: 
+    - item.changed
+    - "'ERROR: Invalid exporter type' in item.stdout"
+  loop: "{{ script_output.results }}"
+  loop_control:
+    label: "{{ item.item }}"
+
+- name: Handle error when failed to download the exporter package
+  debug:
+    msg: "Error: Failed to download the exporter latest version from GitHub."
+  when: 
+    - item.changed
+    - "'ERROR: Failed to download the exporter latest version from GitHub' in item.stdout"
+  loop: "{{ script_output.results }}"
+  loop_control:
+    label: "{{ item.item }}"
+
+- name: Handle error when exporter failed to start
+  debug:
+    msg: "Error: Exporter failed to start or is not running as expected."
+  when: 
+    - item.changed
+    - "'ERROR:' in item.stdout and 'run into a problem' in item.stdout"
+  loop: "{{ script_output.results }}"
+  loop_control:
+    label: "{{ item.item }}"
+
+- name: Handle error when kubectl or helm is not installed
+  debug:
+    msg: "Error: Could not download Kubernetes exporter because kubectl or helm is not installed on target machine."
+  when: 
+    - item.changed
+    - "'ERROR: Could not download Kubernetes exporter because kubectl or helm is not installed on target machine.' in item.stdout"
+  loop: "{{ script_output.results }}"
+  loop_control:
+    label: "{{ item.item }}"
+
+- name: Handle error when storage exporter installation is not implemented
+  debug:
+    msg: "Error: Storage exporter installation not implemented yet."
+  when: 
+    - item.changed
+    - "'ERROR: Storage exporter installation not implemented yet.' in item.stdout"
+  loop: "{{ script_output.results }}"
+  loop_control:
+    label: "{{ item.item }}"
+
+- name: Handle error when proxmox exporter installation is not implemented
+  debug:
+    msg: "Error: Proxmox exporter installation not implemented yet."
+  when: 
+    - item.changed
+    - "'ERROR: Proxmox exporter installation not implemented yet.' in item.stdout"
+  loop: "{{ script_output.results }}"
+  loop_control:
+    label: "{{ item.item }}"
+

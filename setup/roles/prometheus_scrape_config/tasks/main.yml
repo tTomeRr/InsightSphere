@@ -1,0 +1,8 @@
+---
+- name: Run the Prometheus scraping script for adding exporters
+  ansible.builtin.script: generate-scrape-configs.sh 
+  register: script_output
+
+- name: Show the script output
+  ansible.builtin.debug:
+    var: script_output.stdout

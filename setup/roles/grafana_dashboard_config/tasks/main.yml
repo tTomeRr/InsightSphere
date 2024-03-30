@@ -1,0 +1,9 @@
+---
+- name: Run the Grafana configuration setup script 
+  ansible.builtin.script: config_grafana_setup.sh
+  register: script_output
+
+- name: Show the script output
+  ansible.builtin.debug:
+    var: script_output.stdout
+

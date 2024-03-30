@@ -1,0 +1,29 @@
+- name: snmp_exporter alerts
+  rules:
+
+  - alert: SNMPAgentDown
+    expr: up == 0
+    for: 5m
+    labels:
+      severity: critical
+    annotations:
+      summary: "SNMP agent is down on {{ $labels.instance }}"
+      description: "The SNMP agent on {{ $labels.instance }} has been down for more than 5 minutes."
+
+  - alert: InterfaceDown
+    expr: snmp_ifOperStatus != 1
+    for: 5m
+    labels:
+      severity: critical
+    annotations:
+      summary: "Interface {{ $labels.ifDescr }} is down on {{ $labels.instance }}"
+      description: "The interface {{ $labels.ifDescr }} has been down for more than 5 minutes on {{ $labels.instance }}."
+
+  - alert: HighInterfaceUtilization
+    expr: (rate(snmp_ifOutOctets[5m]) * 8 + rate(snmp_ifInOctets[5m]) * 8) / snmp_ifSpeed * 100 > 80
+    for: 10m
+    labels:
+      severity: warning
+    annotations:
+      summary: "High interface utilization on {{ $labels.ifDescr }} ({{ $labels.instance }})"
+      description: "The interface {{ $labels.ifDescr }} on {{ $labels.instance }} has been utilizing more than 80% of its bandwidth for more than 10 minutes."

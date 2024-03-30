@@ -1,0 +1,9 @@
+apiVersion: metallb.io/v1beta1
+kind: IPAddressPool
+metadata:
+  name: prom-graf-ip-pool
+  namespace: {{ metallb_namespace }}
+spec:
+  addresses:
+    - "{{ ip_pool_range.stdout }}"
+

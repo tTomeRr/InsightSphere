@@ -1,0 +1,21 @@
+alertmanager:
+  enable: true
+  config:
+    global:
+      resolve_timeout: 5m
+      pagerduty_url: 'https://events.pagerduty.com/generic/2010-04-15/create_event.json'
+
+    route:
+      group_by: ['cluster']
+      group_wait: 10s
+      group_interval: 10m
+      repeat_interval: 1h
+      receiver: 'pagerduty'
+
+      routes:
+        - receiver: 'pagerduty'
+
+    receivers:
+      - name: 'pagerduty'
+        pagerduty_configs:
+          - service_key: "{{ vault_API_KEY }}" 

@@ -1,0 +1,32 @@
+---
+- include_vars: ../../../values.yml
+
+- name: Check if kubectl is installed
+  command: command -v kubectl
+  register: kubectl_check
+  changed_when: false
+  ignore_errors: true
+
+- name: Download the latest kubectl release
+  uri:
+    url: 'https://dl.k8s.io/release/{{ kubectl_version }}/bin/linux/arm/kubectl'
+    dest: /home/{{ ansible_user }}
+  register: kubectl_download
+  when: kubectl_check.rc != 0
+
+- name: Remove existing kubectl binary
+  file:
+    path: /usr/local/bin/kubectl
+    state: absent
+  when: kubectl_download.changed
+
+- name: Move kubectl and change permissions
+  copy:
+    src: "/home/{{ ansible_user }}/kubectl"
+    dest: /usr/local/bin/kubectl
+    remote_src: yes
+    owner: root
+    group: root
+    mode: '+x'
+  when: kubectl_download.changed
+

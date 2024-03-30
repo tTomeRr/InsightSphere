@@ -1,0 +1,44 @@
+---
+- include_vars: ../../../values.yml
+
+- name: Retrieve the IPv4 Range from the Kind Cluster Network
+  ansible.builtin.shell: >
+    docker network inspect -f '{{ "{{.IPAM.Config}}" | quote }}' kind
+    | grep -o '[0-9]\{1,3\}\.[0-9]\{1,3\}\.[0-9]\{1,3\}'
+    | head -n 1
+  register: ip_range
+  
+- name: Generate the IPv4 Range for MetalLB IP Pool
+  ansible.builtin.shell: echo "{{ ip_range.stdout }}.120-{{ ip_range.stdout }}.129"
+  register: ip_pool_range
+
+- name: Apply MetalLB Base Configuration
+  kubernetes.core.k8s:
+    state: present
+    namespace: "{{ metallb_namespace }}"
+    src: metallb.yml
+
+- name: Get MetalLB pod names
+  shell: kubectl get pods -n metallb-system -o jsonpath="{.items[*].metadata.name}"
+  register: metallb_pods
+
+- name: Convert pod names to a list
+  set_fact:
+    pod_list: "{{ metallb_pods.stdout.split() }}"
+
+- name: Wait for each MetalLB pod to be ready
+  shell: kubectl wait --for=condition=Ready pod/{{ item }} -n metallb-system --timeout=1h
+  loop: "{{ pod_list }}"
+
+- name: Apply MetalLB L2 Advertisement Configuration
+  kubernetes.core.k8s:
+    state: present
+    namespace: "{{ metallb_namespace }}"
+    src: l2advertisement.yml
+
+- name: Apply MetalLB IP Pool Configuration
+  kubernetes.core.k8s:
+    state: present
+    namespace: "{{ metallb_namespace }}"
+    definition: "{{ lookup('template', 'templates/ip-pool.yml.j2') | from_yaml }}"
+

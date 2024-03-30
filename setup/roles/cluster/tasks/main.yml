@@ -1,0 +1,15 @@
+---
+- name: Check if Kind cluster exists
+  command: kind get clusters
+  register: kind_clusters
+  changed_when: false
+
+- name: Copy the Kind cluster configuration file to the managed node
+  ansible.builtin.copy:
+    src: prom-graf-cluster.yml
+    dest: /tmp/prom-graf-cluster.yml
+
+- name: Create the Kind Cluster if not exists
+  ansible.builtin.shell:
+    cmd: "kind create cluster --config /tmp/prom-graf-cluster.yml"
+  when: "'prom-graf-cluster' not in kind_clusters.stdout"

@@ -1,0 +1,29 @@
+prometheus_url: "prometheus.insightsphere.com"
+prometheus_chart_name: "prometheus"
+prometheus_release_name: "prometheus-community"
+prometheus_chart_url: "https://prometheus-community.github.io/helm-charts"
+
+grafana_url: "grafana.insightsphere.com"
+grafana_chart_name: "grafana"
+grafana_release_name: "grafana"
+grafana_chart_url: "https://grafana.github.io/helm-charts"
+
+alertmanager_url: "alertmanager.insightsphere.com"
+
+metallb_namespace: "metallb-system"
+
+exporters_types:
+  - "node_exporter"
+  - "snmp_exporter"
+  - "kubernetes"
+  - "proxmox"
+  - "storage"
+
+helm_version: "v3.13.1"
+kubectl_version: "v1.29.3"
+kind_version: "v0.22.0"
+docker_ce_version: "3:26.0.0-1.fc39.x86_64"
+docker_ce_cli_version: "1:26.0.0-1.fc39.x86_64"
+containerd_io_version: "1.6.28-3.2.fc39.x86_64"
+docker_compose_version: "1.29.2-10.fc39.noarch"
+

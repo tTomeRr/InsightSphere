@@ -1,0 +1,19 @@
+---
+- include_vars: ../../../values.yml
+
+- name: Check if Kind is installed
+  ansible.builtin.shell:
+    cmd: "command -v kind"
+  register: kind_check
+  changed_when: false
+  ignore_errors: true
+
+- name: Download Kind if not installed
+  ansible.builtin.shell: |
+    curl -Lo ./kind https://kind.sigs.k8s.io/dl/{{ kind_version }}/kind-linux-amd64
+    chmod +x ./kind
+    mv ./kind /usr/local/bin/kind
+  args:
+    creates: /usr/local/bin/kind
+  when: kind_check.rc != 0
+  
