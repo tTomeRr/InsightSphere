@@ -16,7 +16,8 @@ By combining Grafana and Prometheus, this project aims to implement a robust mon
 
 ## Project Architcture
 
-![image](https://github.com/tTomeRr/InsightSphere/assets/129614080/61ca20b4-fc66-40d6-bfbe-52913317f1ea)
+![ProjectInsightSphere diagram)](https://github.com/tTomeRr/InsightSphere/assets/129614080/a61a33c8-ec47-4b5f-b5b5-58ccaa0ccdd9)
+
 
 
 
